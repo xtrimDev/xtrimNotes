@@ -1,5 +1,5 @@
 const express = require("express");
-const { ensureNotAuthenticated } = require("../middleware/auth");
+const { ensureNotAuthenticated, ensureAuthenticatedForFetching } = require("../middleware/auth");
 const router = new express.Router();
 
 const Folder = require("../models/folders");
@@ -7,7 +7,7 @@ const files = require("../models/files");
 
 require("dotenv").config();
 
-router.get("/*", async (req, res) => {
+router.get("/*", ensureNotAuthenticated, async (req, res) => {
     try {
         const requestedPath = `/${req.params[0]}`.trim();
 
@@ -29,6 +29,16 @@ router.get("/*", async (req, res) => {
 
 router.post('/*', async (req, res) => {
     try {
+        const result = await ensureAuthenticatedForFetching(req, res);
+
+        if (result?.banned) {
+            return res.status(403).json(result);
+        }
+        
+        if (!result?.authenticated) {
+            return res.status(403).json(result);
+        }
+
         const requestedPath = `/${req.params[0]}`.trim();
 
         if (requestedPath === '/' || requestedPath === '') {
@@ -55,6 +65,7 @@ router.post('/*', async (req, res) => {
             files: subFiles
         });
     } catch (error) {
+        console.log(error);
         return res.status(500).render("errors/500");
     }
 });

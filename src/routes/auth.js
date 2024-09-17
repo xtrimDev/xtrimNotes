@@ -9,7 +9,7 @@ const isNumeric = require("../functions/isNumeric");
 const isEmail = require("../functions/isEmail");
 const { newUser, newVerification, removeUser, resetPass, verifyVerification, checkVerification } = require("../controller/auth");
 const smtp = require("../modules/smtp");
-const { ensureAuthenticated } = require("../middleware/auth");
+const { ensureAuthenticated, ensureNotAuthenticated } = require("../middleware/auth");
 
 require("dotenv").config();
 
@@ -463,6 +463,19 @@ router.post("/resetPassword", ensureAuthenticated, async (req, res) => {
         }
     } catch(error) {
         return res.status(500).render("errors/500");
+    }
+});
+
+router.get("/logout", ensureNotAuthenticated, async (req, res) => {
+    try {
+        req.logout(function(err) {
+            if (err) {
+                return next(err);
+            }
+            return res.redirect(`${req.protocol}://${req.get('host')}/auth/login`);
+        });
+    } catch (err) {
+        return next(err);
     }
 });
 

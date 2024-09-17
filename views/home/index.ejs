@@ -134,13 +134,13 @@
                     <div class="btn file" id="add-file"></div>
                   </div>
                   <label class="switch">
-                      <input id="toggle-theme" type="checkbox" checked>
+                      <input id="toggle-theme" type="checkbox">
                       <span class="slider round"></span>
                   </label>
                   <div class="profile dropdown">
                       <img src="/images/app/8882c204-2c6c-47fa-adf8-aca62ea467.png">
                       <div class="dropdown-content">
-                          <a href="javascript:void(0)" ><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                          <a href="/auth/logout" ><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                       </div>
                   </div>
               </div>
@@ -184,7 +184,42 @@
                 method: "POST",
                 body: JSON.stringify({ a: 1, b: 2 }) 
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) { 
+                    if (response.status == 403) {
+                        const errData = response.json();
+
+                        if (errData?.banned){
+                            Swal.fire({
+                                title: "Account banned",
+                                text: "Your don't have permission to access the content.",
+                                icon: "error",
+                            }).then(()=>{
+                                window.location.href='/auth/login';
+                            });
+                        }
+
+                        if (!errData?.authenticated) {
+                            Swal.fire({
+                                title: "Not authenticated",
+                                text: "Your are not loggedin, login again to access it.",
+                                icon: "error",
+                            }).then(()=>{
+                                window.location.href='/auth/login';
+                            });
+
+                            return;
+                        }
+                    } else {
+                        Swal.fire({
+                            title: "Oops!",
+                            text: "Something went wrong!\n Refresh the page and check again",
+                            icon: "error",
+                        });
+                    }
+                }
+                return response.json();
+            })
             .catch(error => console.error('Error fetching content:', error));
         }
 

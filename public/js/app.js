@@ -1,10 +1,10 @@
 document.body.setAttribute('oncontextmenu', "return false;");
 document.body.setAttribute('onload', "hideLoader()");
 
-function hideLoader(){
+function hideLoader() {
     setTimeout(() => {
         $('.section-loader').fadeOut('fast');
-        $(".container").css("display","flex");
+        $(".container").css("display", "flex");
     }, 500);
 }
 
@@ -45,17 +45,40 @@ togglebtn.addEventListener("click", () => {
         body.classList.remove('light');
         body.classList.add('dark');
     }
-});    
+});
 
 
 $(document).ready(function () {
-    if (togglebtn.checked == false) {
-        body.classList.remove('dark');
-        body.classList.add('light');
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedTheme) {
+        if (savedTheme === "dark") {
+            body.classList.remove('light');
+            body.classList.add('dark');
+            togglebtn.checked = true;
+        } else {
+            body.classList.remove('dark');
+            body.classList.add('light');
+            togglebtn.checked = false;
+        }
     } else {
         body.classList.remove('light');
         body.classList.add('dark');
+        togglebtn.checked = true;
+        localStorage.setItem('theme', 'dark');
     }
+
+    togglebtn.addEventListener('change', function () {
+        if (this.checked) {
+            body.classList.remove('light');
+            body.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            body.classList.remove('dark');
+            body.classList.add('light');
+            localStorage.setItem('theme', 'light');
+        }
+    });
 
     document.getElementById("add-file").addEventListener("click", () => {
         Swal.fire({
@@ -96,12 +119,12 @@ $(document).ready(function () {
                 const fileName = document.getElementById('fileName').value;
                 const slug = document.getElementById('slug').value;
                 const visibility = document.getElementById('visibility').value;
-    
+
                 if (!file || !fileName || !slug) {
                     Swal.showValidationMessage('Please fill all the fields');
                     return false;
                 }
-    
+
                 return { file, fileName, slug, visibility };
             }
         }).then((result) => {
@@ -148,13 +171,13 @@ $(document).ready(function () {
                 const folderName = document.getElementById('folderName').value;
                 const slug = document.getElementById('slug').value;
                 const visibility = document.getElementById('visibility').value;
-    
-                if ( !folderName || !slug) {
+
+                if (!folderName || !slug) {
                     Swal.showValidationMessage('Please fill all the fields');
                     return false;
                 }
-    
-                return {folderName, slug, visibility };
+
+                return { folderName, slug, visibility };
             }
         }).then((result) => {
             if (result.isConfirmed) {
