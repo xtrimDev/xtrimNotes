@@ -899,6 +899,47 @@ button.previous:active {
     .footer-item {
         overflow-x: auto !important
     }
+
+    div:where(.swal2-container) .swal2-html-container {
+        padding: 1em 0.6em .3em !important;
+    }
+}
+
+/* Custom Styles for SweetAlert2 Form */
+.swal2-input {
+    margin: 2rem 0.2rem;
+}
+
+div:where(.swal2-container) {
+    z-index: 10000 !important;
+}
+
+#uploadForm {
+    text-align: left;
+}
+#uploadForm label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+#uploadForm input[type="file"],
+#uploadForm input[type="text"],
+#uploadForm select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #d3d3d3;
+    border-radius: 6px;
+    font-size: 14px;
+}
+#uploadForm input[type="file"] {
+    padding: 6px;
+}
+#uploadForm select {
+    cursor: pointer;
+}
+#uploadForm select option {
+    padding: 10px;
 }
 
 /** =======Animations======= **/

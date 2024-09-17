@@ -63,19 +63,19 @@ $(document).ready(function () {
             html: `
                 <form id="uploadForm">
                     <div class="swal2-input">
-                        <label for="fileInput">Select File:</label><br>
+                        <label for="fileInput">Select File:</label>
                         <input type="file" id="fileInput" name="file">
                     </div>
                     <div class="swal2-input">
-                        <label for="folderName">Folder Name:</label><br>
-                        <input type="text" id="folderName" name="folderName" placeholder="Enter folder name">
+                        <label for="fileName">File Name:</label>
+                        <input type="text" id="fileName" name="fileName" placeholder="Enter file name">
                     </div>
                     <div class="swal2-input">
-                        <label for="slug">Slug:</label><br>
+                        <label for="slug">Slug:</label>
                         <input type="text" id="slug" name="slug" placeholder="Enter slug">
                     </div>
                     <div class="swal2-input">
-                        <label for="visibility">Visibility:</label><br>
+                        <label for="visibility">Visibility:</label>
                         <select id="visibility" name="visibility">
                             <option value="public">Public</option>
                             <option value="private">Private</option>
@@ -86,23 +86,79 @@ $(document).ready(function () {
             focusConfirm: false,
             showCancelButton: true,
             confirmButtonText: 'Submit',
+            customClass: {
+                popup: 'swal2-popup-custom',
+                confirmButton: 'swal2-confirm-custom',
+                cancelButton: 'swal2-cancel-custom'
+            },
             preConfirm: () => {
                 const file = document.getElementById('fileInput').files[0];
-                const folderName = document.getElementById('folderName').value;
+                const fileName = document.getElementById('fileName').value;
                 const slug = document.getElementById('slug').value;
                 const visibility = document.getElementById('visibility').value;
     
-                if (!file || !folderName || !slug) {
+                if (!file || !fileName || !slug) {
                     Swal.showValidationMessage('Please fill all the fields');
                     return false;
                 }
     
-                return { file, folderName, slug, visibility };
+                return { file, fileName, slug, visibility };
             }
         }).then((result) => {
             if (result.isConfirmed) {
                 console.log('File:', result.value.file);
-                console.log('Folder Name:', result.value.folderName);
+                console.log('File Name:', result.value.fileName);
+                console.log('Slug:', result.value.slug);
+                console.log('Visibility:', result.value.visibility);
+            }
+        });
+    });
+
+    document.getElementById("add-folder").addEventListener("click", () => {
+        Swal.fire({
+            title: 'Create a Folder',
+            html: `
+                <form id="uploadForm">
+                    <div class="swal2-input">
+                        <label for="folderName">Folder Name:</label>
+                        <input type="text" id="folderName" name="folderName" placeholder="Enter folder name">
+                    </div>
+                    <div class="swal2-input">
+                        <label for="slug">Slug:</label>
+                        <input type="text" id="slug" name="slug" placeholder="Enter slug">
+                    </div>
+                    <div class="swal2-input">
+                        <label for="visibility">Visibility:</label>
+                        <select id="visibility" name="visibility">
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+                </form>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            customClass: {
+                popup: 'swal2-popup-custom',
+                confirmButton: 'swal2-confirm-custom',
+                cancelButton: 'swal2-cancel-custom'
+            },
+            preConfirm: () => {
+                const folderName = document.getElementById('folderName').value;
+                const slug = document.getElementById('slug').value;
+                const visibility = document.getElementById('visibility').value;
+    
+                if ( !folderName || !slug) {
+                    Swal.showValidationMessage('Please fill all the fields');
+                    return false;
+                }
+    
+                return {folderName, slug, visibility };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log('folder Name:', result.value.folderName);
                 console.log('Slug:', result.value.slug);
                 console.log('Visibility:', result.value.visibility);
             }
