@@ -1,0 +1,271 @@
+<%- include("partials/header",{title}) -%>
+    <div class="container">
+      <section class="left">
+          <div class="logo">
+              <div class="icon"></div>
+              <div class="text">
+                  Note <span class="text-secondary">Solution</span>
+              </div>
+          </div>
+          <div class="divider"></div>
+          <div class="search">
+              <div class="searchicon"></div>
+              <input class="searchbox" placeholder="Type to search..." type="search">
+          </div>
+          <div class="divider"></div>
+          <div class="content">
+              <ul>
+                  <li class="main-menu">
+                      <div class="course">
+                          <span class="text">B.Tech (CSE)</span>
+                          <span class="toggle">+</span>
+                      </div>
+                      <ul class="submenu hidden">
+                          <li class="main-menu">
+                              <div class="course folder">
+                                  <span class="text">I Semester</span>
+                                  <span class="toggle">+</span>
+                              </div>
+                              <ul class="submenu hidden">
+                                  <li class="main-menu">
+                                      <div class="course folder">
+                                          <span class="text">Pyq</span>
+                                          <span class="toggle">+</span>
+                                      </div>
+                                  </li>
+                                  <li class="main-menu">
+                                      <div class="course folder">
+                                          <span class="text">Notes</span>
+                                          <span class="toggle">+</span>
+                                      </div>
+                                  </li>
+                                  <li class="main-menu">
+                                      <div class="course folder">
+                                          <span class="text">Lab</span>
+                                          <span class="toggle">+</span>
+                                      </div>
+                                  </li>
+                              </ul>
+                          </li>
+                          <li class="main-menu">
+                              <div class="course folder">
+                                  <span class="text">II Semester</span>
+                                  <span class="toggle">+</span>
+                              </div>
+                          </li>
+                          <li class="main-menu">
+                              <div class="course folder">
+                                  <span class="text">III Semester</span>
+                                  <span class="toggle">+</span>
+                              </div>
+                          </li>
+                          <li class="main-menu">
+                              <div class="course folder">
+                                  <span class="text">IV Semester</span>
+                                  <span class="toggle">+</span>
+                              </div>
+                          </li>
+                          <li class="main-menu">
+                              <div class="course folder">
+                                  <span class="text">V Semester</span>
+                                  <span class="toggle">+</span>
+                              </div>
+                          </li>
+                      </ul>
+                  </li>
+                  <li class="main-menu">
+                      <div class="course">
+                          <span class="text">MBA</span>
+                          <span class="toggle">+</span>
+                      </div>
+                      <ul class="submenu hidden">
+                          <li class="main-menu">
+                              <div class="course folder">
+                                  <span class="text">I Semester</span>
+                                  <span class="toggle">+</span>
+                              </div>
+                          </li>
+                          <li class="main-menu">
+                              <div class="course folder">
+                                  <span class="text">II Semester</span>
+                                  <span class="toggle">+</span>
+                              </div>
+                          </li>
+                          <li class="main-menu">
+                              <div class="course folder">
+                                  <span class="text">III Semester</span>
+                                  <span class="toggle">+</span>
+                              </div>
+                          </li>
+                          <li class="main-menu">
+                              <div class="course folder">
+                                  <span class="text">IV Semester</span>
+                                  <span class="toggle">+</span>
+                              </div>
+                          </li>
+                          <li class="main-menu">
+                              <div class="course folder">
+                                  <span class="text">V Semester</span>
+                                  <span class="toggle">+</span>
+                              </div>
+                          </li>
+                      </ul>
+                  </li>
+              </ul>
+          </div>
+          <div class="divider"></div>
+      </section>
+      <section class="right">
+          <div class="header">
+              <div class="left-section">
+                  <div class="line"></div>
+                  <div class="search">
+                      <form class="searchinput">
+                          <input class="searchbox" placeholder="Search..." type="search">
+                          <button type="submit" class="btnsearch">
+                              <div class="searchico"></div>
+                          </button>
+                      </form>
+                  </div>
+              </div>
+              <div class="right-section">
+                  <div class="actions">
+                    <div class="btn folder" id="add-folder"></div>
+                    <div class="btn file" id="add-file"></div>
+                  </div>
+                  <label class="switch">
+                      <input id="toggle-theme" type="checkbox" checked>
+                      <span class="slider round"></span>
+                  </label>
+                  <div class="profile dropdown">
+                      <img src="/images/app/8882c204-2c6c-47fa-adf8-aca62ea467.png">
+                      <div class="dropdown-content">
+                          <a href="javascript:void(0)" ><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="content">
+          </div>
+      </section>
+    </div>
+    <script>
+        function decodeSlug(slug) {
+            return slug.replace('-', ' ');
+        }
+
+        function encodeSlug(text) {
+            return text.replace(" ", '-');
+        }
+
+        const loader = `
+            <div class='content-loaders'>
+                <div class="bounce ball1"></div>
+                <div class="bounce ball2"></div>
+                <div class="bounce ball3"></div>
+                <div class="bounce ball4"></div>
+            </div>`;
+
+        const footer = `
+            <div class="footer">
+                <div class="footer-item">
+                    <div class="icon donation"></div>
+                    <div class="text">Want to help us by making a small donation? <span>Donate</span></div>
+                </div>
+                <div class="footer-item">
+                    <div class="icon group"></div>
+                    <div class="text">Want to know about me? Check out <span onclick="window.open('https://xtrimdev.github.io/', '_blank')">Contributors</span></div>
+                </div>
+            </div>`;
+    
+        function fetchContent(url) {
+            return fetch(url, {
+                headers: { 'Content-Type': 'application/json' },
+                method: "POST",
+                body: JSON.stringify({ a: 1, b: 2 }) 
+            })
+            .then(response => response.json())
+            .catch(error => console.error('Error fetching content:', error));
+        }
+
+        function updateBreadcrumbs(path) {
+            // console.log(path);
+            path = decodeSlug(path);
+            const parts = path.split('/').filter(Boolean); 
+            let breadcrumbHtml = `<div class="breadcrumb"><ul> <li class="home" onclick="changePageContent('/', 'Home')">Home</li>`; 
+            let currentPath = '';
+
+            parts.forEach((part, index) => {
+                currentPath += `/${part}`;
+
+                if (index === parts.length - 1) {
+                    breadcrumbHtml += ` <li class="folder">${part}</li>`;
+                } else {
+                    breadcrumbHtml += ` <li class="folder" onclick="changePageContent('${encodeSlug(currentPath)}', '${part}')">${part}</li>`;
+                }
+            });
+
+            breadcrumbHtml += '</ul></div>';
+            
+            return breadcrumbHtml;
+        }
+    
+        function updateContent(url, title = '') {
+            $(".container .right .content").html(loader); 
+
+            let breadcrumbHtml = updateBreadcrumbs(url);
+
+            fetchContent(url).then(data => {
+                if (!data) return; 
+    
+                const folders = data['folders'].map(item => `
+                    <a class="content" onclick="changePageContent('${item.path}', '${item.name}')">
+                        <div class="icon folder"></div>
+                        <div class="text">${item.name}</div>
+                    </a>
+                `).join('');
+
+                const files = data['files'].map(item => `
+                    <a class="content">
+                        <div class="icon file"></div>
+                        <div class="text">${item.name}</div>
+                    </a>
+                `).join('');
+
+                const currentUrl = window.location.pathname;
+                const newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+
+                const params = newUrl.split("/");
+
+                const previousTitle = decodeSlug(params[params.length - 1]);
+
+                if (data['folders'].length == 0 && data['files'].length == 0) {
+                    $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div><button class="previous" onclick="changePageContent('${newUrl}', '${previousTitle}')">Go back</button></div>${footer}`);
+                } else {
+                    $(".container .right .content").html(`${breadcrumbHtml}<div class="management">${folders}${files}</div><div class="clearfix"></div>${footer}`);
+                }
+
+                if (title) document.title = title; 
+            });
+        }
+    
+        function changePageContent(newUrl, newTitle) {
+            history.pushState({ title: newTitle }, newTitle, newUrl); 
+            document.title = newTitle; 
+            updateContent(newUrl, newTitle); 
+        }
+    
+        window.addEventListener('popstate', (event) => {
+            const state = event.state;
+            const title = state?.title || document.title; 
+            updateContent(location.pathname, title);     
+        });
+    
+        $(document).ready(() => {
+            const initialPath = '<%= path %>';
+            const initialTitle = document.title; 
+            history.replaceState({ title: initialTitle }, initialTitle, initialPath); 
+            updateContent(initialPath);
+        });
+    </script>    
+<%- include("partials/footer") -%>

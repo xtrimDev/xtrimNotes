@@ -1,0 +1,43 @@
+<%- include("partials/header",{title:"Signup"}) -%>
+    <div class="container">
+      <div class="wrapper">
+        <div class="title">
+          <span>Register Form</span>
+        </div>
+        <form method="POST" id="regForm" autocomplete="off">
+          <div class="row">
+            <i class="fas fa-user"></i>
+            <input 
+              type="text" 
+              name="name" 
+              placeholder="Enter your full name..." autocomplete="off" 
+              required 
+            />
+          </div>
+          <div class="row">
+            <i class="fas fa-mail-bulk"></i>
+            <input type="email" name="email" placeholder="Enter your Email..." autocomplete="off" required />
+          </div>
+          <div class="row">
+            <i class="fas fa-phone"></i>
+            <input type="tel" name="tel" placeholder="Enter your Mobile..." autocomplete="off" required minlength="10" maxlength="10" />
+          </div>
+          <div class="row">
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password..." autocomplete="off"
+              required
+            />
+          </div>
+          <div class="row button">
+            <input type="submit" id="regBtn" value="Register" />
+          </div>
+          <div class="signup-link">
+            Already a member? <a href="/auth/login">Login now</a>
+          </div>
+        </form>
+      </div>
+    </div>
+<%- include("partials/footer") -%>

@@ -1,0 +1,38 @@
+<%- include("partials/header",{title:"Login"}) -%>
+    <div class="container">
+      <div class="wrapper">
+        <div class="title">
+          <span>Login Form</span>
+        </div>
+        <form method="POST" id="logForm" autocomplete="off">
+          <div class="row">
+            <i class="fas fa-mail-bulk"></i>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email..."
+              required
+            />
+          </div>
+          <div class="row">
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password..."
+              required
+            />
+          </div>
+          <div class="pass">
+            <a href="/auth/forgotPassword">Forgot password?</a>
+          </div>
+          <div class="row button">
+            <input type="submit" id="logBtn" value="Login" />
+          </div>
+          <div class="signup-link">
+            Not a member? <a href="/auth/register">Signup now</a>
+          </div>
+        </form>
+      </div>
+    </div>
+<%- include("partials/footer") -%>
