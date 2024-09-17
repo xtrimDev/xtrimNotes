@@ -224,7 +224,6 @@
         }
 
         function updateBreadcrumbs(path) {
-            // console.log(path);
             path = decodeSlug(path);
             const parts = path.split('/').filter(Boolean); 
             let breadcrumbHtml = `<div class="breadcrumb"><ul> <li class="home" onclick="changePageContent('/', 'Home')">Home</li>`; 
