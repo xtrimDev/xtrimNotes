@@ -294,7 +294,11 @@
                 const previousTitle = decodeSlug(params[params.length - 1]);
 
                 if (data['folders'].length == 0 && data['files'].length == 0) {
-                    $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div><button class="previous" onclick="changePageContent('${(newUrl.trim() == '' ? '/' : newUrl)}', '${previousTitle}')">Go back</button></div>${footer}`);
+                    if (currentUrl != "/") {
+                        $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div><button class="previous" onclick="changePageContent('${(newUrl.trim() == '' ? '/' : newUrl)}', '${previousTitle}')">Go back</button></div>${footer}`);
+                    } else {
+                        $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div></div>${footer}`);
+                    }
                 } else {
                     $(".container .right .content").html(`${breadcrumbHtml}<div class="management">${folders}${files}</div><div class="clearfix"></div>${footer}`);
                 }
