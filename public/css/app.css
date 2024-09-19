@@ -733,6 +733,10 @@ button.previous:active {
     text-overflow: ellipsis;
 }
 
+.management .content .text {
+    text-transform: capitalize;
+}
+
 .management .content:hover .text {
     color: #acafca;
     text-overflow: ellipsis;

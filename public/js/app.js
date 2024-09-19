@@ -210,7 +210,7 @@ $(document).ready(function () {
                     </div>
                     <div class="swal2-input">
                         <label for="slug">Slug:</label>
-                        <input type="text" id="slug-folder" name="slug" placeholder="Enter slug" disabled>
+                        <input type="text" id="slug-folder" name="slug" placeholder="Enter slug">
                     </div>
                     <div class="swal2-input">
                         <label for="visibility">Visibility:</label>

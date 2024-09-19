@@ -171,11 +171,15 @@
         }
 
         function decodeSlug(slug) {
-            return slug.replace('-', ' ');
+            return slug.replace(/-/g, ' ');
         }
 
         function encodeSlug(text) {
-            return text.toLowerCase().replace(" ", '-');
+            return text
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, '-')              
+                .replace(/[^a-z0-9\-\/]+/g, '');   
         }
 
         const loader = `
@@ -248,15 +252,19 @@
             const parts = path.split('/').filter(Boolean); 
             let breadcrumbHtml = `<div class="breadcrumb"><ul> <li class="home" onclick="changePageContent('/', 'Home')">Home</li>`; 
             let currentPath = '';
+            
+            let position = 0;
 
             parts.forEach((part, index) => {
                 currentPath += `/${part}`;
 
                 if (index === parts.length - 1) {
-                    breadcrumbHtml += ` <li class="folder">${part}</li>`;
+                    breadcrumbHtml += ` <li class="${(position == 0 ? 'course' : 'folder')}">${part}</li>`;
                 } else {
-                    breadcrumbHtml += ` <li class="folder" onclick="changePageContent('${encodeSlug(currentPath)}', '${part}')">${part}</li>`;
+                    breadcrumbHtml += ` <li class="${(position == 0 ? 'course' : 'folder')}" onclick="changePageContent('${encodeSlug(currentPath)}', '${part}')">${part}</li>`;
                 }
+
+                position++;
             });
 
             breadcrumbHtml += '</ul></div>';
