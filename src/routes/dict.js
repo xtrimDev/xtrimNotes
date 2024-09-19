@@ -9,6 +9,9 @@ const app = express();
 
 const multer = require('multer');
 const path = require("path");
+const { permission } = require("process");
+const uniqueString = require("../functions/uniqueString");
+const fs = require("fs");
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -16,8 +19,8 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname); 
-        cb(null, uniqueSuffix + ext); 
+        const ext = path.extname(file.originalname);
+        cb(null, uniqueSuffix + ext);
     }
 });
 const upload = multer({ storage });
@@ -153,10 +156,37 @@ router.post("/addFile", async (req, res, next) => {
                 });
             }
 
-            console.log(req.file);
-            const ext =  req.file.originalname.substring(req.file.originalname.lastIndexOf('.') + 1, req.file.originalname.length + 1);
-             
-            console.log(ext);
+            const ext = req.file.originalname.substring(req.file.originalname.lastIndexOf('.') + 1, req.file.originalname.length);
+
+            if (ext != 'pdf') {
+                const filePath = `../../uploads/${req.file.filename}`;
+
+                fs.unlink(filePath, (err) => {
+                    return res.status(400).json({
+                        success: 0,
+                        msg: "Only pdf file is allowed",
+                        permission: 1
+                    });
+                });
+            }
+
+            const file = new files({
+                name: fileName,
+                fileType: "pdf",
+                folder: folder._id,
+                uploadedBy: req.user._id,
+                url: req.file.filename,
+                uniqueName: uniqueString(15),
+                accessLevel: visibility
+            });
+
+            await file.save();
+
+            return {
+                success: 1,
+                msg: "File saved successfully",
+                permission: 1
+            }
         } else if (atFolder == "/") {
             const ListDuplicateFiles = await files.findOne({ folder: null, name: fileName });
 
@@ -168,9 +198,37 @@ router.post("/addFile", async (req, res, next) => {
                 });
             }
 
-            const ext =  req.file.originalname.substring(req.file.originalname.lastIndexOf('.') + 1, req.file.originalname.length - 1);
-             
-            console.log(ext);
+            const ext = req.file.originalname.substring(req.file.originalname.lastIndexOf('.') + 1, req.file.originalname.length);
+
+            if (ext != 'pdf') {
+                const filePath = `../../uploads/${req.file.filename}`;
+
+                fs.unlink(filePath, (err) => {
+                    return res.status(400).json({
+                        success: 0,
+                        msg: "Only pdf file is allowed",
+                        permission: 1
+                    });
+                });
+            }
+
+            const file = new files({
+                name: fileName,
+                fileType: "pdf",
+                folder: null,
+                uploadedBy: req.user._id,
+                url: req.file.filename,
+                uniqueName: uniqueString(15),
+                accessLevel: visibility
+            });
+
+            await file.save();
+
+            return {
+                success: 1,
+                msg: "File saved successfully",
+                permission: 1
+            }
         } else {
             return res.status(400).json({
                 success: 0,
@@ -179,7 +237,6 @@ router.post("/addFile", async (req, res, next) => {
             });
         }
     } catch (error) {
-        console.log(error);
         if (error?.name === 'ValidationError') {
             const firstErrorField = Object.keys(result.msg.errors)[0];
 
