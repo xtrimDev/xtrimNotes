@@ -50,9 +50,26 @@ async function ensureAuthenticatedForFetching(req, res) {
             return {authenticated: true, banned: false};
         }
     } catch (err) {
-        console.log(err);
         return err;
     }
 }
 
-module.exports = { ensureAuthenticated, ensureNotAuthenticated, ensureAuthenticatedForFetching };
+async function ensureAdminAuthenticated (req, res) {
+    try {
+        if (!req.isAuthenticated()) {
+            return {authenticated: false, admin: false};
+        }
+
+        const user = await users.findById(req.user._id);
+        
+        if (user && user.role === 'admin' || user && user.role == "owner") {
+            return {authenticated: true, admin: true};
+        } else {
+            return {authenticated: true, admin: false};
+        }
+    } catch (err) {
+        return err;
+    }
+}
+
+module.exports = { ensureAuthenticated, ensureNotAuthenticated, ensureAuthenticatedForFetching, ensureAdminAuthenticated };

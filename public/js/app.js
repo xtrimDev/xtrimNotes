@@ -84,7 +84,7 @@ $(document).ready(function () {
         Swal.fire({
             title: 'Upload a File',
             html: `
-                <form id="uploadForm">
+                <form id="uploadForm" class="file-upload" enctype="multipart/form-data">
                     <div class="swal2-input">
                         <label for="fileInput">Select File:</label>
                         <input type="file" id="fileInput" name="file">
@@ -93,15 +93,15 @@ $(document).ready(function () {
                         <label for="fileName">File Name:</label>
                         <input type="text" id="fileName" name="fileName" placeholder="Enter file name">
                     </div>
-                    <div class="swal2-input">
-                        <label for="slug">Slug:</label>
-                        <input type="text" id="slug" name="slug" placeholder="Enter slug">
+                    <div>
+                        <input type="text" id="currentUrl" name="currentUrl" value="${window.location.pathname}" style="display: none; opacity: 0">
                     </div>
                     <div class="swal2-input">
                         <label for="visibility">Visibility:</label>
-                        <select id="visibility" name="visibility">
-                            <option value="public">Public</option>
-                            <option value="private">Private</option>
+                        <select id="visibility-file" name="visibility">
+                            <option value="Owner">Owner</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Public">Public</option>
                         </select>
                     </div>
                 </form>
@@ -115,24 +115,86 @@ $(document).ready(function () {
                 cancelButton: 'swal2-cancel-custom'
             },
             preConfirm: () => {
-                const file = document.getElementById('fileInput').files[0];
                 const fileName = document.getElementById('fileName').value;
-                const slug = document.getElementById('slug').value;
-                const visibility = document.getElementById('visibility').value;
 
-                if (!file || !fileName || !slug) {
+                if (!fileName) {
                     Swal.showValidationMessage('Please fill all the fields');
                     return false;
                 }
 
-                return { file, fileName, slug, visibility };
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                console.log('File:', result.value.file);
-                console.log('File Name:', result.value.fileName);
-                console.log('Slug:', result.value.slug);
-                console.log('Visibility:', result.value.visibility);
+                let uploadForm = document.querySelector(".file-upload");
+                let formData = new FormData(uploadForm);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/dict/addFile',
+                    data: formData,
+                    processData: false,   
+                    contentType: false,
+                    success: (response) => {
+                        if (response?.success && response?.permission) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'File uploaded Successfully',
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(() => {
+                                updateContent(window.location.pathname, document.title);
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Something went wrong',
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(() => {
+                                updateContent(window.location.pathname, document.title);
+                            });
+                        }
+                    },
+                    error: (xhr, status, error) => {
+                        if (xhr.status == 400) {
+                            const response = JSON.parse(xhr.responseText);
+
+                            if (!response.permission) {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: `Not authorized`,
+                                    text: "Your are not authorized to upload a file",
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                }).then(() => {
+                                    updateContent(window.location.pathname, document.title);
+                                });
+
+                                return
+                            }
+
+                            Swal.fire({
+                                icon: 'info',
+                                title: `Error`,
+                                text: response.msg,
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(() => {
+                                updateContent(window.location.pathname, document.title);
+                            });
+
+                            return;
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error 500',
+                                text: "Internal server error!",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(() => {
+                                updateContent(window.location.pathname, document.title);
+                            });
+                        }
+                    }
+                })
             }
         });
     });
@@ -144,17 +206,18 @@ $(document).ready(function () {
                 <form id="uploadForm">
                     <div class="swal2-input">
                         <label for="folderName">Folder Name:</label>
-                        <input type="text" id="folderName" name="folderName" placeholder="Enter folder name">
+                        <input type="text" id="folderName" name="folderName" placeholder="Enter folder name" oninput="folderSlug()">
                     </div>
                     <div class="swal2-input">
                         <label for="slug">Slug:</label>
-                        <input type="text" id="slug" name="slug" placeholder="Enter slug">
+                        <input type="text" id="slug-folder" name="slug" placeholder="Enter slug" disabled>
                     </div>
                     <div class="swal2-input">
                         <label for="visibility">Visibility:</label>
-                        <select id="visibility" name="visibility">
-                            <option value="public">Public</option>
-                            <option value="private">Private</option>
+                        <select id="visibility-folder" name="visibility">
+                            <option value="Public" selected>Public</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Owner">Owner</option>
                         </select>
                     </div>
                 </form>
@@ -169,21 +232,84 @@ $(document).ready(function () {
             },
             preConfirm: () => {
                 const folderName = document.getElementById('folderName').value;
-                const slug = document.getElementById('slug').value;
-                const visibility = document.getElementById('visibility').value;
+                const slug = document.getElementById('slug-folder').value;
+                const visibility = document.getElementById('visibility-folder').value;
 
                 if (!folderName || !slug) {
                     Swal.showValidationMessage('Please fill all the fields');
                     return false;
                 }
 
-                return { folderName, slug, visibility };
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                console.log('folder Name:', result.value.folderName);
-                console.log('Slug:', result.value.slug);
-                console.log('Visibility:', result.value.visibility);
+                const currentUrl = window.location.pathname;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/dict/addFolder',
+                    data: `folderName=${encodeURIComponent(folderName)}&slug=${encodeURIComponent(slug)}&visibility=${encodeURIComponent(visibility)}&atFolder=${encodeURIComponent(currentUrl)}`,
+                    success: (response) => {
+                        if (response?.success && response?.permission) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Folder created Successfully',
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(() => {
+                                updateContent(window.location.pathname, document.title);
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Something went wrong',
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(() => {
+                                updateContent(window.location.pathname, document.title);
+                            });
+                        }
+                    },
+                    error: (xhr, status, error) => {
+                        if (xhr.status == 400) {
+                            const response = JSON.parse(xhr.responseText);
+
+                            if (!response.permission) {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: `Not authorized`,
+                                    text: "Your are not authorized to create a folder",
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                }).then(() => {
+                                    updateContent(window.location.pathname, document.title);
+                                });
+
+                                return
+                            }
+
+                            Swal.fire({
+                                icon: 'info',
+                                title: `Error`,
+                                text: response.msg,
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(() => {
+                                updateContent(window.location.pathname, document.title);
+                            });
+
+                            return;
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error 500',
+                                text: "Internal server error!",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(() => {
+                                updateContent(window.location.pathname, document.title);
+                            });
+                        }
+                    }
+                })
             }
         });
     });

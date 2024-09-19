@@ -35,15 +35,19 @@ app.set("views", viewsPath);
 
 const home_route = require("./routes/home");
 const auth_route = require("./routes/auth");
+const embed_route = require("./routes/embed");
+const dict_route = require("./routes/dict");
 const error_route = require("./routes/error");
 
+app.use("/embed", embed_route);
+app.use("/dict", dict_route);
 app.use("/auth", auth_route);
 app.use("/", home_route);
 app.use(error_route);
 
-app.use((err, req, res, next) => {
-    return res.status(500).render("errors/500")
-});
+// app.use((err, req, res, next) => {
+//     return res.status(500).render("errors/500")
+// });
 
 app.listen(port, () => {
     console.clear();

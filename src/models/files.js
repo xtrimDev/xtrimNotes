@@ -25,6 +25,10 @@ const fileSchema = new mongoose.Schema(
             type: String, 
             required: true 
         }, 
+        uniqueName: {
+            type: String,
+            required: true,
+        },
         accessLevel: {
             type: String,
             enum: ['owner', 'admin', 'user'],

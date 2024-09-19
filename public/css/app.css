@@ -421,7 +421,7 @@ li ul.submenu>li {
     gap: 20px
 }
 
-.right-section .actions  {
+.right-section .actions {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -649,47 +649,47 @@ input:checked+.slider:before {
 }
 
 button.previous {
-  appearance: none;
-  background-color: transparent;
-  border: 2px solid --primary-color;
-  border-radius: 15px;
-  box-sizing: border-box;
-  color: var(--primary-color);
-  cursor: pointer;
-  display: inline-block;
-  font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-  font-size: 16px;
-  font-weight: 600;
-  line-height: normal;
-  margin: 0;
-  min-height: 60px;
-  min-width: 0;
-  outline: none;
-  padding: 5px 24px;
-  text-align: center;
-  text-decoration: none;
-  transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  /* width: ; */
-  will-change: transform;
+    appearance: none;
+    background-color: transparent;
+    border: 2px solid --primary-color;
+    border-radius: 15px;
+    box-sizing: border-box;
+    color: var(--primary-color);
+    cursor: pointer;
+    display: inline-block;
+    font-family: Roobert, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+    margin: 0;
+    min-height: 60px;
+    min-width: 0;
+    outline: none;
+    padding: 5px 24px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    /* width: ; */
+    will-change: transform;
 }
 
 button.previous:disabled {
-  pointer-events: none;
+    pointer-events: none;
 }
 
 button.previous:hover {
-  color: #fff;
-  background-color: #1A1A1A;
-  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
-  transform: translateY(-2px);
+    color: #fff;
+    background-color: #1A1A1A;
+    box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+    transform: translateY(-2px);
 }
 
 button.previous:active {
-  box-shadow: none;
-  transform: translateY(0);
+    box-shadow: none;
+    transform: translateY(0);
 }
 
 .nothing .img {
@@ -705,7 +705,7 @@ button.previous:active {
     font-size: 2rem;
     color: var(--primary-color);
     font-weight: 600;
-    text-transform:capitalize;
+    text-transform: capitalize;
 }
 
 .management .content {
@@ -917,11 +917,13 @@ div:where(.swal2-container) {
 #uploadForm {
     text-align: left;
 }
+
 #uploadForm label {
     display: block;
     font-weight: bold;
     margin-bottom: 6px;
 }
+
 #uploadForm input[type="file"],
 #uploadForm input[type="text"],
 #uploadForm select {
@@ -932,14 +934,109 @@ div:where(.swal2-container) {
     border-radius: 6px;
     font-size: 14px;
 }
+
 #uploadForm input[type="file"] {
     padding: 6px;
 }
+
 #uploadForm select {
     cursor: pointer;
 }
+
 #uploadForm select option {
     padding: 10px;
+}
+
+.viewerContainer {
+    display: none;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 11000;
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.8);
+    overflow: auto;
+}
+
+.viewerContainer .viewer {
+    /* top: 60px; */
+    max-width: 100%;
+    position: relative;
+    top: 60px;
+    /* height: calc(100% - 60px); Adjust height for toolbar */
+    background: white; /* Optional: Adds a background color */
+}
+
+.viewerContainer .close {
+    position: fixed;
+    top: 8px;
+    right: 20px;
+    z-index: 11;
+    font-size: 40px;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    padding: 0 14px;
+    /* padding: 10px; */
+    cursor: pointer;
+}
+
+.viewerContainer .titlebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 12px 8px;
+    padding-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.viewerContainer .titlebar .leftbtn {
+    align-items:flex-start;
+}
+
+/* Toolbar styles */
+.viewerContainer .toolbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 100000;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.viewerContainer button {
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.viewerContainer button:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.viewerContainer .pageInfo {
+    font-size: 16px;
 }
 
 /** =======Animations======= **/

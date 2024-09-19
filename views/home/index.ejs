@@ -149,13 +149,33 @@
           </div>
       </section>
     </div>
+    <div class="viewerContainer" id="viewerContainer">
+        <button class="close" id="closeViewerButton">×</button>
+        <div class="titlebar">
+            <div class="leftbtn">Open in New Tab</div>
+            <div class="pageTitle">Document Preview</div>
+        </div>
+        <div class="toolbar">
+            <button id="prevPageButton">Previous Page</button>
+            <div class="pageInfo">Page: <span id="currentPage">1</span> / <span id="totalPages">1</span></div>
+            <button id="nextPageButton">Next Page</button>
+        </div>
+        <canvas class="viewer" id="pdfViewer"></canvas>
+    </div>
+    <script src="/js/embed.js"></script>
     <script>
+        function folderSlug() {
+            document.getElementById("folderName").addEventListener("change", function () {
+                document.getElementById("slug-folder").value = encodeSlug(this.value);
+            })
+        }
+
         function decodeSlug(slug) {
             return slug.replace('-', ' ');
         }
 
         function encodeSlug(text) {
-            return text.replace(" ", '-');
+            return text.toLowerCase().replace(" ", '-');
         }
 
         const loader = `
@@ -260,7 +280,7 @@
                 `).join('');
 
                 const files = data['files'].map(item => `
-                    <a class="content">
+                    <a class="content" data-embed="${item.uniqueName}">
                         <div class="icon file"></div>
                         <div class="text">${item.name}</div>
                     </a>
@@ -274,7 +294,7 @@
                 const previousTitle = decodeSlug(params[params.length - 1]);
 
                 if (data['folders'].length == 0 && data['files'].length == 0) {
-                    $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div><button class="previous" onclick="changePageContent('${newUrl}', '${previousTitle}')">Go back</button></div>${footer}`);
+                    $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div><button class="previous" onclick="changePageContent('${(newUrl.trim() == '' ? '/' : newUrl)}', '${previousTitle}')">Go back</button></div>${footer}`);
                 } else {
                     $(".container .right .content").html(`${breadcrumbHtml}<div class="management">${folders}${files}</div><div class="clearfix"></div>${footer}`);
                 }

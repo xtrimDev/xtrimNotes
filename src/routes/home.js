@@ -42,8 +42,8 @@ router.post('/*', async (req, res) => {
         const requestedPath = `/${req.params[0]}`.trim();
 
         if (requestedPath === '/' || requestedPath === '') {
-            const rootFolders = await Folder.find({ parentFolder: null }).select("name path _id");
-            const rootFiles = await files.find({ folder: null }).select("name fileType url");
+            const rootFolders = await Folder.find({ parentFolder: null }).select("name path");
+            const rootFiles = await files.find({ folder: null }).select("name uniqueName");
 
             return res.status(200).json({
                 folders: rootFolders,
@@ -51,21 +51,20 @@ router.post('/*', async (req, res) => {
             }); 
         }
 
-        const parentFolder = await Folder.findOne({ path: requestedPath }).select("name path _id");
+        const parentFolder = await Folder.findOne({ path: requestedPath }).select("_id");
 
         if (!parentFolder) {
             return res.status(404).render("errors/404");
         }
 
         const subFolders = await Folder.find({ parentFolder: parentFolder._id });
-        const subFiles = await files.find({ folder: parentFolder._id }).select("name fileType url");
+        const subFiles = await files.find({ folder: parentFolder._id }).select("name uniqueName");
 
         res.status(200).json({
             folders: subFolders,
             files: subFiles
         });
     } catch (error) {
-        console.log(error);
         return res.status(500).render("errors/500");
     }
 });

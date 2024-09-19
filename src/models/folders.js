@@ -33,14 +33,4 @@ const folderSchema = new mongoose.Schema(
     }
 );
 
-folderSchema.pre('save', async function (next) {
-    if (!this.parentFolder) {
-        this.path = `/${this.name}`;
-    } else {
-        const parent = await mongoose.model('Folder').findById(this.parentFolder);
-        this.path = `${parent.path}/${this.name}`;
-    }
-    next();
-});
-
 module.exports = mongoose.model('Folder', folderSchema);;
