@@ -111,11 +111,11 @@ router.post("/addFolder", async (req, res) => {
         }
     } catch (error) {
         if (error?.name === 'ValidationError') {
-            const firstErrorField = Object.keys(result.msg.errors)[0];
+            const firstErrorField = Object.keys(error.errors)[0];
 
             errorData = {
                 success: 0,
-                msg: result.msg.errors[firstErrorField].message,
+                msg: error.errors[firstErrorField].message,
                 permission: 1
             }
 
@@ -177,16 +177,16 @@ router.post("/addFile", async (req, res, next) => {
                 uploadedBy: req.user._id,
                 url: req.file.filename,
                 uniqueName: uniqueString(15),
-                accessLevel: visibility
+                accessLevel: (visibility.toLowerCase() == "public" ? "user" : visibility.toLowerCase())
             });
 
             await file.save();
 
-            return {
+            return res.status(200).json({
                 success: 1,
                 msg: "File saved successfully",
                 permission: 1
-            }
+            });
         } else if (atFolder == "/") {
             const ListDuplicateFiles = await files.findOne({ folder: null, name: fileName });
 
@@ -219,16 +219,16 @@ router.post("/addFile", async (req, res, next) => {
                 uploadedBy: req.user._id,
                 url: req.file.filename,
                 uniqueName: uniqueString(15),
-                accessLevel: visibility
+                accessLevel: (visibility.toLowerCase() == "public" ? "user" : visibility.toLowerCase())
             });
 
             await file.save();
 
-            return {
+            return res.status(200).json({
                 success: 1,
                 msg: "File saved successfully",
                 permission: 1
-            }
+            });
         } else {
             return res.status(400).json({
                 success: 0,
@@ -238,11 +238,11 @@ router.post("/addFile", async (req, res, next) => {
         }
     } catch (error) {
         if (error?.name === 'ValidationError') {
-            const firstErrorField = Object.keys(result.msg.errors)[0];
+            const firstErrorField = Object.keys(error.errors)[0];
 
             errorData = {
                 success: 0,
-                msg: result.msg.errors[firstErrorField].message,
+                msg: error.errors[firstErrorField].message,
                 permission: 1
             }
 

@@ -14,104 +14,13 @@
           </div>
           <div class="divider"></div>
           <div class="content">
-              <ul>
-                  <li class="main-menu">
-                      <div class="course">
-                          <span class="text">B.Tech (CSE)</span>
-                          <span class="toggle">+</span>
-                      </div>
-                      <ul class="submenu hidden">
-                          <li class="main-menu">
-                              <div class="course folder">
-                                  <span class="text">I Semester</span>
-                                  <span class="toggle">+</span>
-                              </div>
-                              <ul class="submenu hidden">
-                                  <li class="main-menu">
-                                      <div class="course folder">
-                                          <span class="text">Pyq</span>
-                                          <span class="toggle">+</span>
-                                      </div>
-                                  </li>
-                                  <li class="main-menu">
-                                      <div class="course folder">
-                                          <span class="text">Notes</span>
-                                          <span class="toggle">+</span>
-                                      </div>
-                                  </li>
-                                  <li class="main-menu">
-                                      <div class="course folder">
-                                          <span class="text">Lab</span>
-                                          <span class="toggle">+</span>
-                                      </div>
-                                  </li>
-                              </ul>
-                          </li>
-                          <li class="main-menu">
-                              <div class="course folder">
-                                  <span class="text">II Semester</span>
-                                  <span class="toggle">+</span>
-                              </div>
-                          </li>
-                          <li class="main-menu">
-                              <div class="course folder">
-                                  <span class="text">III Semester</span>
-                                  <span class="toggle">+</span>
-                              </div>
-                          </li>
-                          <li class="main-menu">
-                              <div class="course folder">
-                                  <span class="text">IV Semester</span>
-                                  <span class="toggle">+</span>
-                              </div>
-                          </li>
-                          <li class="main-menu">
-                              <div class="course folder">
-                                  <span class="text">V Semester</span>
-                                  <span class="toggle">+</span>
-                              </div>
-                          </li>
-                      </ul>
-                  </li>
-                  <li class="main-menu">
-                      <div class="course">
-                          <span class="text">MBA</span>
-                          <span class="toggle">+</span>
-                      </div>
-                      <ul class="submenu hidden">
-                          <li class="main-menu">
-                              <div class="course folder">
-                                  <span class="text">I Semester</span>
-                                  <span class="toggle">+</span>
-                              </div>
-                          </li>
-                          <li class="main-menu">
-                              <div class="course folder">
-                                  <span class="text">II Semester</span>
-                                  <span class="toggle">+</span>
-                              </div>
-                          </li>
-                          <li class="main-menu">
-                              <div class="course folder">
-                                  <span class="text">III Semester</span>
-                                  <span class="toggle">+</span>
-                              </div>
-                          </li>
-                          <li class="main-menu">
-                              <div class="course folder">
-                                  <span class="text">IV Semester</span>
-                                  <span class="toggle">+</span>
-                              </div>
-                          </li>
-                          <li class="main-menu">
-                              <div class="course folder">
-                                  <span class="text">V Semester</span>
-                                  <span class="toggle">+</span>
-                              </div>
-                          </li>
-                      </ul>
-                  </li>
-              </ul>
+            <% if (folderTree && folderTree.length > 0) { %>
+                <ul>
+                    <% for (let i = 0; i < folderTree.length; i++) { %>
+                        <%- include('folderTree', { folder: folderTree[i], classOf: ' '}) %>
+                    <% } %>
+                </ul>
+            <% } %>
           </div>
           <div class="divider"></div>
       </section>
@@ -129,10 +38,12 @@
                   </div>
               </div>
               <div class="right-section">
+                <% if (uploader) { %>
                   <div class="actions">
                     <div class="btn folder" id="add-folder"></div>
                     <div class="btn file" id="add-file"></div>
                   </div>
+                <% } %>
                   <label class="switch">
                       <input id="toggle-theme" type="checkbox">
                       <span class="slider round"></span>
@@ -192,7 +103,7 @@
 
         const footer = `
             <div class="footer">
-                <div class="footer-item">
+                <div class="footer-item" style="display: none">
                     <div class="icon donation"></div>
                     <div class="text">Want to help us by making a small donation? <span>Donate</span></div>
                 </div>

@@ -4,15 +4,34 @@ const router = new express.Router();
 
 const Folder = require("../models/folders");
 const files = require("../models/files");
+const { getFolderTree } = require("../controller/folder");
 
 require("dotenv").config();
 
 router.get("/*", ensureNotAuthenticated, async (req, res) => {
     try {
+        if (req.user.role == "owner") {
+            uploader = true;
+        }  else if (req.user.role == "admin") {
+            uploader = true;
+        } else {
+            uploader = false;
+        } 
+
+        if (req.user.role == "owner") {
+            accessLevel = ["owner","admin", "user"];
+        }  else if (req.user.role == "admin") {
+            accessLevel = ["admin", "user"];
+        } else {
+            accessLevel = ["user"];
+        } 
+
+        const folderTree = await getFolderTree(null,accessLevel);
+
         const requestedPath = `/${req.params[0]}`.trim();
 
         if (requestedPath === '/' || requestedPath === '') {
-            return res.status(200).render("home/index", {path: requestedPath, title: "Home"});
+            return res.status(200).render("home/index", {path: requestedPath, title: "Home", uploader, folderTree});
         }
 
         const result = await Folder.findOne({ path: requestedPath }).select("name");
@@ -20,7 +39,7 @@ router.get("/*", ensureNotAuthenticated, async (req, res) => {
         if (!result) {
             return res.status(404).render("errors/404");
         } else {
-            return res.status(200).render("home/index", {path: requestedPath, title: result.name});
+            return res.status(200).render("home/index", {path: requestedPath, title: result.name, uploader, folderTree});
         }
     } catch (error) {
         return res.status(500).render("errors/500");
@@ -65,7 +84,7 @@ router.post('/*', async (req, res) => {
             return res.status(404).render("errors/404");
         }
 
-        const subFolders = await Folder.find({ parentFolder: parentFolder._id, accessLevel: { $in: accessLevel} });
+        const subFolders = await Folder.find({ parentFolder: parentFolder._id, accessLevel: { $in: accessLevel} }).select("name path");
         const subFiles = await files.find({ folder: parentFolder._id, accessLevel: { $in: accessLevel } }).select("name uniqueName");
 
         res.status(200).json({

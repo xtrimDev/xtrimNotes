@@ -240,7 +240,12 @@ body {
     display: block;
     width: 100%;
     height: 100%;
+    cursor: pointer;
     margin: auto 0
+}
+
+.content ul li.main-menu .course .text:hover {
+    opacity: 0.7;
 }
 
 .content ul li.main-menu .course .toggle {

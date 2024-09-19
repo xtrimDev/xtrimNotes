@@ -15,9 +15,9 @@ for (let i = 0; i < expand.length; i++) {
         const change = e.target.parentNode.nextElementSibling;
 
         if (e.target.innerText === '-') {
-            e.target.innerText = '+';
+            e.target.innerText = ' +';
         } else {
-            e.target.innerText = '-';
+            e.target.innerText = ' - ';
         }
 
         if (change) {
