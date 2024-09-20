@@ -80,7 +80,7 @@ $(document).ready(function () {
         }
     });
 
-    document.getElementById("add-file").addEventListener("click", () => {
+    document?.getElementById("add-file")?.addEventListener("click", () => {
         Swal.fire({
             title: 'Upload a File',
             html: `
@@ -199,7 +199,7 @@ $(document).ready(function () {
         });
     });
 
-    document.getElementById("add-folder").addEventListener("click", () => {
+    document?.getElementById("add-folder")?.addEventListener("click", () => {
         Swal.fire({
             title: 'Create a Folder',
             html: `
