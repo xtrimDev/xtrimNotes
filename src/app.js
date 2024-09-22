@@ -52,7 +52,7 @@ app.use(error_route);
 app.listen(port, () => {
     console.clear();
     console.log(`Connected to the port ${port}`);
-    console.log(`http://localhost:${port}`);
+    // console.log(`http://localhost:${port}`);
 }).on('error', (err) => {
     console.log(`Unable to connect to the port ${port}`);
     console.log(`${err}`);

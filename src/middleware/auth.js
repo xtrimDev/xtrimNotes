@@ -2,14 +2,14 @@ const users = require('../models/users');
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-        return res.redirect(`${req.protocol}://${req.get('host')}/`);
+        return res.redirect(`/`);
     }
     next();
 }
 
 async function ensureNotAuthenticated(req, res, next) {
     if (!req.isAuthenticated()) {
-        return res.redirect(`${req.protocol}://${req.get('host')}/auth/login`);
+        return res.redirect(`/auth/login`);
     }
 
     try {
@@ -20,7 +20,7 @@ async function ensureNotAuthenticated(req, res, next) {
                 if (err) {
                     return next(err);
                 }
-                return res.redirect(`${req.protocol}://${req.get('host')}/auth/login`);
+                return res.redirect(`/auth/login`);
             });
         } else {
             return next();

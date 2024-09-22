@@ -472,7 +472,7 @@ router.get("/logout", ensureNotAuthenticated, async (req, res) => {
             if (err) {
                 return next(err);
             }
-            return res.redirect(`${req.protocol}://${req.get('host')}/auth/login`);
+            return res.redirect(`/auth/login`);
         });
     } catch (err) {
         return next(err);
