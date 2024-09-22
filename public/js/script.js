@@ -262,7 +262,7 @@ $(document).ready(function () {
                 }
 
                 logBtn.prop("disabled", false);
-                logBtn.val("Register");
+                logBtn.val("Login");
             }
         })
     });

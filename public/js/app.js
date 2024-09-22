@@ -84,14 +84,14 @@ $(document).ready(function () {
         Swal.fire({
             title: 'Upload a File',
             html: `
-                <form id="uploadForm" class="file-upload" enctype="multipart/form-data">
+                <form id="uploadForm" enctype="multipart/form-data" class="file-upload" autocomplete="off">
                     <div class="swal2-input">
                         <label for="fileInput">Select File:</label>
                         <input type="file" id="fileInput" name="file">
                     </div>
                     <div class="swal2-input">
                         <label for="fileName">File Name:</label>
-                        <input type="text" id="fileName" name="fileName" placeholder="Enter file name">
+                        <input type="text" id="fileName" name="fileName" placeholder="Enter file name" required>
                     </div>
                     <div>
                         <input type="text" id="currentUrl" name="currentUrl" value="${window.location.pathname}" style="display: none; opacity: 0">
@@ -203,14 +203,14 @@ $(document).ready(function () {
         Swal.fire({
             title: 'Create a Folder',
             html: `
-                <form id="uploadForm">
+                <form id="uploadForm" autocomplete="off">
                     <div class="swal2-input">
                         <label for="folderName">Folder Name:</label>
-                        <input type="text" id="folderName" name="folderName" placeholder="Enter folder name" oninput="folderSlug()">
+                        <input type="text" id="folderName" name="folderName" placeholder="Enter folder name" oninput="folderSlug()" required>
                     </div>
                     <div class="swal2-input">
                         <label for="slug">Slug:</label>
-                        <input type="text" id="slug-folder" name="slug" placeholder="Enter slug">
+                        <input type="text" id="slug-folder" name="slug" placeholder="Enter slug" required>
                     </div>
                     <div class="swal2-input">
                         <label for="visibility">Visibility:</label>

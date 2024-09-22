@@ -935,6 +935,7 @@ div:where(.swal2-container) {
 
 #uploadForm input[type="file"],
 #uploadForm input[type="text"],
+#uploadForm input[type="url"],
 #uploadForm select {
     width: 100%;
     padding: 10px;
