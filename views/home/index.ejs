@@ -4,14 +4,13 @@
           <div class="logo">
               <div class="icon"></div>
               <div class="text">
-                  Note <span class="text-secondary">Solution</span>
+                  Xtrim <span class="text-secondary">Notes</span>
               </div>
           </div>
           <div class="divider"></div>
-          <div class="search">
-              <div class="searchicon"></div>
-              <input class="searchbox" placeholder="Type to search..." type="search">
-          </div>
+          <div class="welcome-text">
+            Welcome      
+        </div>
           <div class="divider"></div>
           <div class="content">
             <% if (folderTree && folderTree.length > 0) { %>
@@ -28,14 +27,6 @@
           <div class="header">
               <div class="left-section">
                   <div class="line"></div>
-                  <div class="search">
-                      <form class="searchinput">
-                          <input class="searchbox" placeholder="Search..." type="search">
-                          <button type="submit" class="btnsearch">
-                              <div class="searchico"></div>
-                          </button>
-                      </form>
-                  </div>
               </div>
               <div class="right-section">
                 <% if (uploader) { %>
@@ -63,7 +54,6 @@
     <div class="viewerContainer" id="viewerContainer">
         <button class="close" id="closeViewerButton">×</button>
         <div class="titlebar">
-            <div class="leftbtn">Open in New Tab</div>
             <div class="pageTitle">Document Preview</div>
         </div>
         <div class="toolbar">

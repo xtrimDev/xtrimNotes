@@ -124,6 +124,15 @@ body {
     margin-left: 2rem
 }
 
+.container .left .welcome-text {
+    text-align: center;
+    width: 100%;
+    margin: 0;
+    font-size: 1.4rem;
+    font-family: "Showcard Gothic";
+    color: white;
+}
+
 .container .left .logo {
     display: flex;
     flex-direction: row;
@@ -237,10 +246,13 @@ body {
 }
 
 .content ul li.main-menu .course .text {
-    display: block;
-    width: 100%;
-    height: 100%;
+    display: inline-block;
+    /* width: 100%; */
+    /* height: 100%; */
     cursor: pointer;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 87%;
     margin: auto 0
 }
 
@@ -249,7 +261,7 @@ body {
 }
 
 .content ul li.main-menu .course .toggle {
-    margin-top: -1.4rem;
+    margin-top: -0.8rem;
     font-size: 2rem;
     float: right;
     color: var(--main-color);
@@ -351,7 +363,7 @@ li ul.submenu>li {
     flex-direction: column;
     transition: all .5s ease-in-out;
     overflow-y: auto;
-    overflow-x: hidden
+    overflow-x: hidden;
 }
 
 .container .left.collapse+.right {
@@ -360,7 +372,7 @@ li ul.submenu>li {
 }
 
 .container .left.collapse+.right .header {
-    padding-left: 20px
+    padding-left: 20px;
 }
 
 .container .right .header {
@@ -387,7 +399,8 @@ li ul.submenu>li {
     background-size: 2.5rem;
     height: 60px;
     width: 2rem;
-    cursor: pointer
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
 }
 
 .container .right .header .left-section .line:active {
