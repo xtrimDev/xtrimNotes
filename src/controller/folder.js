@@ -17,4 +17,10 @@ async function getFolderTree(parentFolder = null, accessLevel) {
     return folderTree;
 }
 
-module.exports = {getFolderTree};
+async function getHomeFolders(accessLevel) {
+    const folders = await Folder.find({ parentFolder: null, accessLevel: { $in: accessLevel} }).select("name path");
+
+    return folders;
+}
+
+module.exports = {getFolderTree, getHomeFolders};

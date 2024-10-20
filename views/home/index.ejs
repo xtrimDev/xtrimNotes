@@ -1,18 +1,25 @@
 <%- include("partials/header",{title}) -%>
+<div class="overlay"></div>
+
     <div class="container">
       <section class="left">
-          <div class="logo">
-              <div class="icon"></div>
-              <div class="text">
-                  Xtrim <span class="text-secondary">Notes</span>
+
+        <div class="top">
+            <div class="logo">
+                <div class="icon"></div>
+                <div class="text">
+                    Xtrim <span class="text-secondary">Notes</span>
+                </div>
+            </div>
+
+            <div class="close">
+                <i class="fas fa-times"></i>
               </div>
-          </div>
-          <div class="divider"></div>
-          <div class="welcome-text">
-            Welcome      
         </div>
+          
+          
           <div class="divider"></div>
-          <div class="content">
+          <div class="content" style="margin-left: 1rem;">
             <% if (folderTree && folderTree.length > 0) { %>
                 <ul>
                     <% for (let i = 0; i < folderTree.length; i++) { %>
@@ -27,18 +34,28 @@
           <div class="header">
               <div class="left-section">
                   <div class="line"></div>
+                  <div class="telegram-button sm-btn-hide">
+                    <a href="https://t.me/gehubtechg1" target="_blank">
+                        <i class="fab fa-telegram-plane"></i>
+                        <span>Join Telegram for Notes</span>
+                    </a>
+                </div>
               </div>
               <div class="right-section">
                 <% if (uploader) { %>
                   <div class="actions">
-                    <div class="btn folder" id="add-folder"></div>
-                    <div class="btn file" id="add-file"></div>
+                    <div class="btn xsm-btn-hide" id="add-folder">
+                        <i class="fas fa-folder-plus"></i>
+                    </div>
+                    <div class="btn xsm-btn-hide" id="add-file">
+                        <i class="fa-solid fa-file-alt"></i>
+                    </div>
                   </div>
                 <% } %>
-                  <label class="switch">
+                  <!-- <label class="switch">
                       <input id="toggle-theme" type="checkbox">
                       <span class="slider round"></span>
-                  </label>
+                  </label> -->
                   <div class="profile dropdown">
                       <img src="/images/app/8882c204-2c6c-47fa-adf8-aca62ea467.png">
                       <div class="dropdown-content">
@@ -84,12 +101,15 @@
         }
 
         const loader = `
-            <div class='content-loaders'>
-                <div class="bounce ball1"></div>
-                <div class="bounce ball2"></div>
-                <div class="bounce ball3"></div>
-                <div class="bounce ball4"></div>
-            </div>`;
+            <div class="bouncer-loader">
+                <div class="bouncing-loader">
+                <div></div>
+                <div></div>
+                <div></div>
+                </div>
+            </div>
+
+`;
 
         const footer = `
             <div class="footer">
@@ -173,8 +193,8 @@
             return breadcrumbHtml;
         }
     
-        function updateContent(url, title = '') {
-            $(".container .right .content").html(loader); 
+        async function updateContent(url, title = '') {
+            $(".container .right .content").html(loader);
 
             let breadcrumbHtml = updateBreadcrumbs(url);
 

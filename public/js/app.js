@@ -27,25 +27,30 @@ for (let i = 0; i < expand.length; i++) {
 }
 
 const line = document.getElementsByClassName("line");
+const close = document.getElementsByClassName("close");
 const left = document.getElementsByClassName("left");
 
 line[0].addEventListener("click", (e) => {
     left[0].classList.toggle('collapse');
 });
 
+close[0].addEventListener("click", (e) => {
+    left[0].classList.toggle('collapse');
+});
+
 /** toggle theme*/
 const body = document.body;
-const togglebtn = document.getElementById('toggle-theme');
+// const togglebtn = document.getElementById('toggle-theme');
 
-togglebtn.addEventListener("click", () => {
-    if (togglebtn.checked == false) {
-        body.classList.remove('dark');
-        body.classList.add('light');
-    } else {
-        body.classList.remove('light');
-        body.classList.add('dark');
-    }
-});
+// togglebtn.addEventListener("click", () => {
+//     if (togglebtn.checked == false) {
+//         body.classList.remove('dark');
+//         body.classList.add('light');
+//     } else {
+//         body.classList.remove('light');
+//         body.classList.add('dark');
+//     }
+// });
 
 
 $(document).ready(function () {
@@ -55,30 +60,30 @@ $(document).ready(function () {
         if (savedTheme === "dark") {
             body.classList.remove('light');
             body.classList.add('dark');
-            togglebtn.checked = true;
+            // togglebtn.checked = true;
         } else {
             body.classList.remove('dark');
             body.classList.add('light');
-            togglebtn.checked = false;
+            // togglebtn.checked = false;
         }
     } else {
         body.classList.remove('light');
         body.classList.add('dark');
-        togglebtn.checked = true;
+        // togglebtn.checked = true;
         localStorage.setItem('theme', 'dark');
     }
 
-    togglebtn.addEventListener('change', function () {
-        if (this.checked) {
-            body.classList.remove('light');
-            body.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            body.classList.remove('dark');
-            body.classList.add('light');
-            localStorage.setItem('theme', 'light');
-        }
-    });
+    // togglebtn.addEventListener('change', function () {
+    //     if (this.checked) {
+    //         body.classList.remove('light');
+    //         body.classList.add('dark');
+    //         localStorage.setItem('theme', 'dark');
+    //     } else {
+    //         body.classList.remove('dark');
+    //         body.classList.add('light');
+    //         localStorage.setItem('theme', 'light');
+    //     }
+    // });
 
     document?.getElementById("add-file")?.addEventListener("click", () => {
         Swal.fire({
@@ -99,9 +104,9 @@ $(document).ready(function () {
                     <div class="swal2-input">
                         <label for="visibility">Visibility:</label>
                         <select id="visibility-file" name="visibility">
-                            <option value="Owner">Owner</option>
-                            <option value="Admin">Admin</option>
                             <option value="Public">Public</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Owner">Owner</option>
                         </select>
                     </div>
                 </form>

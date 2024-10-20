@@ -1,16 +1,4 @@
 <li class="main-menu">
-    <div class='course <%= classOf %>'>
-        <span class="text" onclick="changePageContent('<%= folder.path %>', '<%= folder.name %>')"><%= folder.name %></span>
-        <% if (folder.children && folder.children.length > 0) { %>
-            <span class="toggle"> + </span>
-        <% } %>
+    <div class='course <%= classOf %>' onclick="changePageContent('<%= folder.path %>', '<%= folder.name %>')"><%= folder.name %>
     </div>
-    
-    <% if (folder.children && folder.children.length > 0) { %>
-        <ul class="submenu hidden">
-            <% for (let j = 0; j < folder.children.length; j++) { %>
-                <%- include('folderTree', { folder: folder.children[j], classOf: 'folder' }) %>
-            <% } %>
-        </ul>
-    <% } %>
 </li>

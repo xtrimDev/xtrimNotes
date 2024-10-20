@@ -46,6 +46,7 @@ app.use("/", home_route);
 app.use(error_route);
 
 app.use((err, req, res, next) => {
+  console.log(err);
     return res.status(500).render("errors/500")
 });
 

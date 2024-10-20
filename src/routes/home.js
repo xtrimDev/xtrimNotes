@@ -4,7 +4,7 @@ const router = new express.Router();
 
 const Folder = require("../models/folders");
 const files = require("../models/files");
-const { getFolderTree } = require("../controller/folder");
+const { getFolderTree, getHomeFolders } = require("../controller/folder");
 
 require("dotenv").config();
 
@@ -26,12 +26,12 @@ router.get("/*", ensureNotAuthenticated, async (req, res) => {
             accessLevel = ["user"];
         } 
 
-        const folderTree = await getFolderTree(null,accessLevel);
+        const folderTree = await getHomeFolders(accessLevel);
 
         const requestedPath = `/${req.params[0]}`.trim();
 
         if (requestedPath === '/' || requestedPath === '') {
-            return res.status(200).render("home/index", {path: requestedPath, title: "Home", uploader, folderTree});
+            return res.status(200).render("home/index", {path: requestedPath, title: "Home", uploader, folderTree, accessLevel});
         }
 
         const result = await Folder.findOne({ path: requestedPath }).select("name");
@@ -39,7 +39,7 @@ router.get("/*", ensureNotAuthenticated, async (req, res) => {
         if (!result) {
             return res.status(404).render("errors/404");
         } else {
-            return res.status(200).render("home/index", {path: requestedPath, title: result.name, uploader, folderTree});
+            return res.status(200).render("home/index", {path: requestedPath, title: result.name, uploader, folderTree, accessLevel});
         }
     } catch (error) {
         return res.status(500).render("errors/500");

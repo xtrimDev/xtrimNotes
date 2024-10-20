@@ -110,6 +110,7 @@ router.post("/addFolder", async (req, res) => {
             });
         }
     } catch (error) {
+        console.log(error);
         if (error?.name === 'ValidationError') {
             const firstErrorField = Object.keys(error.errors)[0];
 
@@ -135,6 +136,7 @@ router.post("/addFile", async (req, res, next) => {
 
         next();
     } catch (error) {
+        console.log(error);
         return res.status(500).render("errors/500");
     }
 }, upload.single('file'), async (req, res, next) => {
@@ -237,6 +239,7 @@ router.post("/addFile", async (req, res, next) => {
             });
         }
     } catch (error) {
+        console.log(error);
         if (error?.name === 'ValidationError') {
             const firstErrorField = Object.keys(error.errors)[0];
 
