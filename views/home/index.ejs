@@ -63,16 +63,23 @@
       </section>
     </div>
     <div class="viewerContainer" id="viewerContainer">
+        <button class="openInTab" id="openInTab" title="open in new tab"><i class="fas fa-external-link-alt"></i></button>
+
         <button class="close" id="closeViewerButton">×</button>
+        
         <div class="titlebar">
-            <div class="pageTitle">Document Preview</div>
+            <div class="pageTitle" id="pageTitle">Document Preview</div>
         </div>
+        
         <div class="toolbar">
-            <button id="prevPageButton">Previous Page</button>
             <div class="pageInfo">Page: <span id="currentPage">1</span> / <span id="totalPages">1</span></div>
-            <button id="nextPageButton">Next Page</button>
+            <div class="pageInfo">
+                Go to page: 
+                <input type="number" id="goto-input" min="1">
+                <button id="goto-button">Go</button>
+            </div>
         </div>
-        <canvas class="viewer" id="pdfViewer"></canvas>
+        <div class="pdfViewer" id="pdfViewer"></div>
     </div>
     <script src="/js/embed.js"></script>
     <script>
@@ -201,7 +208,7 @@
                 `).join('');
 
                 const files = data['files'].map(item => `
-                    <a class="content" data-embed="${item.uniqueName}">
+                    <a class="content" data-embed="${item.uniqueName}" data-name="${item.name}">
                         <div class="icon file"></div>
                         <div class="text">${item.name}</div>
                     </a>

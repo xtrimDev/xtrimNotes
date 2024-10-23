@@ -1,0 +1,14 @@
+<%- include("partials/header",{title}) -%>
+    <div id="title"><%= title %></div> 
+    <div id="loading">Loading PDF...</div>
+
+    <div id="pdf-container"></div>
+
+    <div id="goto-container">
+        Go to page: 
+        <input type="number" id="goto-input" min="1" />
+        <button id="goto-button">Go</button>
+    </div>
+
+    <div id="page-number">Page: <span id="current-page">1</span> / <span id="total-pages">1</span></div>
+<%- include("partials/footer") -%>
