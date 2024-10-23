@@ -14,7 +14,6 @@ $(document).ready(function () {
             var context = pdfViewer.getContext('2d');
 
             context.clearRect(0, 0, pdfViewer.width, pdfViewer.height);
-            // context.fillStyle = "white"; // Set the text color to white
             context.font = "20px Arial";
             context.fillText("Loading...", pdfViewer.width / 2 - 50, pdfViewer.height / 2);
 

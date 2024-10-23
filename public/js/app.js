@@ -38,21 +38,7 @@ close[0].addEventListener("click", (e) => {
     left[0].classList.toggle('collapse');
 });
 
-/** toggle theme*/
 const body = document.body;
-// const togglebtn = document.getElementById('toggle-theme');
-
-// togglebtn.addEventListener("click", () => {
-//     if (togglebtn.checked == false) {
-//         body.classList.remove('dark');
-//         body.classList.add('light');
-//     } else {
-//         body.classList.remove('light');
-//         body.classList.add('dark');
-//     }
-// });
-
-
 $(document).ready(function () {
     const savedTheme = localStorage.getItem('theme');
 
@@ -60,30 +46,15 @@ $(document).ready(function () {
         if (savedTheme === "dark") {
             body.classList.remove('light');
             body.classList.add('dark');
-            // togglebtn.checked = true;
         } else {
             body.classList.remove('dark');
             body.classList.add('light');
-            // togglebtn.checked = false;
         }
     } else {
         body.classList.remove('light');
         body.classList.add('dark');
-        // togglebtn.checked = true;
         localStorage.setItem('theme', 'dark');
     }
-
-    // togglebtn.addEventListener('change', function () {
-    //     if (this.checked) {
-    //         body.classList.remove('light');
-    //         body.classList.add('dark');
-    //         localStorage.setItem('theme', 'dark');
-    //     } else {
-    //         body.classList.remove('dark');
-    //         body.classList.add('light');
-    //         localStorage.setItem('theme', 'light');
-    //     }
-    // });
 
     document?.getElementById("add-file")?.addEventListener("click", () => {
         Swal.fire({
@@ -102,7 +73,7 @@ $(document).ready(function () {
                         <input type="text" id="currentUrl" name="currentUrl" value="${window.location.pathname}" style="display: none; opacity: 0">
                     </div>
                     <div class="swal2-input">
-                        <label for="visibility">Visibility:</label>
+                        <label for="visibility-file">Visibility:</label>
                         <select id="visibility-file" name="visibility">
                             <option value="Public">Public</option>
                             <option value="Admin">Admin</option>
@@ -140,7 +111,7 @@ $(document).ready(function () {
                         if (response?.success && response?.permission) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'File uploaded Successfully',
+                                text: 'File uploaded Successfully',
                                 showConfirmButton: false,
                                 timer: 1500,
                             }).then(() => {
@@ -211,14 +182,14 @@ $(document).ready(function () {
                 <form id="uploadForm" autocomplete="off">
                     <div class="swal2-input">
                         <label for="folderName">Folder Name:</label>
-                        <input type="text" id="folderName" name="folderName" placeholder="Enter folder name" oninput="folderSlug()" required>
+                        <input type="text" id="folderName" name="folderName" placeholder="Enter folder name" oninput="folderSlug()" autocomplete="off" required>
                     </div>
                     <div class="swal2-input">
-                        <label for="slug">Slug:</label>
-                        <input type="text" id="slug-folder" name="slug" placeholder="Enter slug" required>
+                        <label for="slug-folder">Slug:</label>
+                        <input type="text" id="slug-folder" name="slug" placeholder="Enter slug" autocomplete="off" disabled required>
                     </div>
                     <div class="swal2-input">
-                        <label for="visibility">Visibility:</label>
+                        <label for="visibility-folder">Visibility:</label>
                         <select id="visibility-folder" name="visibility">
                             <option value="Public" selected>Public</option>
                             <option value="Admin">Admin</option>
@@ -255,7 +226,7 @@ $(document).ready(function () {
                         if (response?.success && response?.permission) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Folder created Successfully',
+                                text: 'Folder created Successfully',
                                 showConfirmButton: false,
                                 timer: 1500,
                             }).then(() => {

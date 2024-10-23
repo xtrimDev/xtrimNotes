@@ -1,29 +1,27 @@
 <%- include("partials/header",{title}) -%>
-<div class="overlay"></div>
-
+    <div class="overlay"></div>
     <div class="container">
       <section class="left">
-
         <div class="top">
             <div class="logo">
                 <div class="icon"></div>
                 <div class="text">
-                    Xtrim <span class="text-secondary">Notes</span>
+                    <%= setting.appName.split(" ")[0] %> <span class="text-secondary"><%= setting.appName.split(" ")[1] %></span>
                 </div>
             </div>
-
             <div class="close">
                 <i class="fas fa-times"></i>
               </div>
         </div>
-          
-          
           <div class="divider"></div>
           <div class="content" style="margin-left: 1rem;">
-            <% if (folderTree && folderTree.length > 0) { %>
+            <% if (homeFolders && homeFolders.length > 0) { %>
                 <ul>
-                    <% for (let i = 0; i < folderTree.length; i++) { %>
-                        <%- include('folderTree', { folder: folderTree[i], classOf: ' '}) %>
+                    <% for (let i = 0; i < homeFolders.length; i++) { %>
+                        <li class="main-menu">
+                            <div class='course' onclick="changePageContent('<%= homeFolders[i].path %>', '<%= homeFolders[i].name %>')"><%= homeFolders[i].name %>
+                            </div>
+                        </li>
                     <% } %>
                 </ul>
             <% } %>
@@ -35,7 +33,7 @@
               <div class="left-section">
                   <div class="line"></div>
                   <div class="telegram-button sm-btn-hide">
-                    <a href="https://t.me/gehubtechg1" target="_blank">
+                    <a href="<%= setting.teleLink %>" target="_blank">
                         <i class="fab fa-telegram-plane"></i>
                         <span>Join Telegram for Notes</span>
                     </a>
@@ -52,10 +50,6 @@
                     </div>
                   </div>
                 <% } %>
-                  <!-- <label class="switch">
-                      <input id="toggle-theme" type="checkbox">
-                      <span class="slider round"></span>
-                  </label> -->
                   <div class="profile dropdown">
                       <img src="/images/app/8882c204-2c6c-47fa-adf8-aca62ea467.png">
                       <div class="dropdown-content">
@@ -107,13 +101,11 @@
                 <div></div>
                 <div></div>
                 </div>
-            </div>
-
-`;
+            </div> `;
 
         const footer = `
-            <!--<div class="footer">
-                <div class="footer-item" style="display: none">
+            <div class="footer">
+                <div class="footer-item">
                     <div class="icon donation"></div>
                     <div class="text">Want to help us by making a small donation? <span>Donate</span></div>
                 </div>
@@ -121,7 +113,7 @@
                     <div class="icon group"></div>
                     <div class="text">Want to know about me? Check out <span onclick="window.open('https://xtrimdev.github.io/', '_blank')">Contributors</span></div>
                 </div>
-            </div>-->`;
+            </div>`;
     
         function fetchContent(url) {
             return fetch(url, {
@@ -224,12 +216,16 @@
 
                 if (data['folders'].length == 0 && data['files'].length == 0) {
                     if (currentUrl != "/") {
-                        $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div><button class="previous" onclick="changePageContent('${(newUrl.trim() == '' ? '/' : newUrl)}', '${previousTitle}')">Go back</button></div>${footer}`);
+                        $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div><button class="previous" onclick="changePageContent('${(newUrl.trim() == '' ? '/' : newUrl)}', '${previousTitle}')">Go back</button></div>`);
                     } else {
                         $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div></div>${footer}`);
                     }
                 } else {
-                    $(".container .right .content").html(`${breadcrumbHtml}<div class="management">${folders}${files}</div><div class="clearfix"></div>${footer}`);
+                    if (currentUrl != "/") {
+                        $(".container .right .content").html(`${breadcrumbHtml}<div class="management">${folders}${files}</div><div class="clearfix"></div>`);
+                    } else {
+                        $(".container .right .content").html(`${breadcrumbHtml}<div class="management">${folders}${files}</div><div class="clearfix"></div>${footer}`);
+                    }
                 }
 
                 if (title) document.title = title; 
@@ -237,6 +233,9 @@
         }
     
         function changePageContent(newUrl, newTitle) {
+            const left = document.getElementsByClassName("left");
+            left[0].classList.remove("collapse");
+
             history.pushState({ title: newTitle }, newTitle, newUrl); 
             document.title = newTitle; 
             updateContent(newUrl, newTitle); 

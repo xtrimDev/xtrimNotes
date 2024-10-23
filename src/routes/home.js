@@ -12,26 +12,20 @@ router.get("/*", ensureNotAuthenticated, async (req, res) => {
     try {
         if (req.user.role == "owner") {
             uploader = true;
-        }  else if (req.user.role == "admin") {
-            uploader = true;
-        } else {
-            uploader = false;
-        } 
-
-        if (req.user.role == "owner") {
             accessLevel = ["owner","admin", "user"];
         }  else if (req.user.role == "admin") {
+            uploader = true;
             accessLevel = ["admin", "user"];
         } else {
+            uploader = false;
             accessLevel = ["user"];
-        } 
+        }
 
-        const folderTree = await getHomeFolders(accessLevel);
-
+        const homeFolders = await getHomeFolders(accessLevel);
         const requestedPath = `/${req.params[0]}`.trim();
 
         if (requestedPath === '/' || requestedPath === '') {
-            return res.status(200).render("home/index", {path: requestedPath, title: "Home", uploader, folderTree, accessLevel});
+            return res.status(200).render("home/index", {path: requestedPath, title: "Home", uploader, homeFolders, accessLevel, setting : {appName: process.env.APP_NAME, teleLink: process.env.TELE_LINK}});
         }
 
         const result = await Folder.findOne({ path: requestedPath }).select("name");
@@ -39,7 +33,7 @@ router.get("/*", ensureNotAuthenticated, async (req, res) => {
         if (!result) {
             return res.status(404).render("errors/404");
         } else {
-            return res.status(200).render("home/index", {path: requestedPath, title: result.name, uploader, folderTree, accessLevel});
+            return res.status(200).render("home/index", {path: requestedPath, title: result.name, uploader, homeFolders, accessLevel, setting : {appName: process.env.APP_NAME, teleLink: process.env.TELE_LINK}});
         }
     } catch (error) {
         return res.status(500).render("errors/500");
@@ -49,12 +43,8 @@ router.get("/*", ensureNotAuthenticated, async (req, res) => {
 router.post('/*', async (req, res) => {
     try {
         const result = await ensureAuthenticatedForFetching(req, res);
-
-        if (result?.banned) {
-            return res.status(403).json(result);
-        }
         
-        if (!result?.authenticated) {
+        if (result?.banned || !result?.authenticated) {
             return res.status(403).json(result);
         }
 
@@ -69,8 +59,8 @@ router.post('/*', async (req, res) => {
         } 
 
         if (requestedPath === '/' || requestedPath === '') {
-            const rootFolders = await Folder.find({ parentFolder: null, accessLevel: { $in: accessLevel }}).select("name path");
-            const rootFiles = await files.find({ folder: null, accessLevel: { $in: accessLevel } }).select("name uniqueName");
+            const rootFolders = await Folder.find({ parentFolder: null, accessLevel: { $in: accessLevel }}).select("name path -_id");
+            const rootFiles = await files.find({ folder: null, accessLevel: { $in: accessLevel } }).select("name uniqueName -_id");
 
             return res.status(200).json({
                 folders: rootFolders,
@@ -84,8 +74,8 @@ router.post('/*', async (req, res) => {
             return res.status(404).render("errors/404");
         }
 
-        const subFolders = await Folder.find({ parentFolder: parentFolder._id, accessLevel: { $in: accessLevel} }).select("name path");
-        const subFiles = await files.find({ folder: parentFolder._id, accessLevel: { $in: accessLevel } }).select("name uniqueName");
+        const subFolders = await Folder.find({ parentFolder: parentFolder._id, accessLevel: { $in: accessLevel} }).select("name path -_id");
+        const subFiles = await files.find({ folder: parentFolder._id, accessLevel: { $in: accessLevel } }).select("name uniqueName -_id");
 
         res.status(200).json({
             folders: subFolders,
