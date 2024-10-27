@@ -1,23 +1,16 @@
-let currentPage = 1;
-let totalPages = 1;
+let currentPage = 1, totalPages = 1;
 
 function getLastSegment(url) {
-    const segments = new URL(url).pathname.split('/');
-    return segments.pop() || segments[segments.length - 1];
+    return new URL(url).pathname.split('/').pop() || '';
 }
 
 const currentUrl = window.location.href;
-
 const lastValue = getLastSegment(currentUrl);
-
-// Show loading message
 const loadingMessage = document.getElementById('loading');
 loadingMessage.style.display = 'block';
 
-
-try {
-    // Load PDF and render pages
-    pdfjsLib.getDocument(`/embed/${lastValue}`).promise.then(function (pdfDoc) {
+pdfjsLib.getDocument(`/embed/${lastValue}`).promise
+    .then(pdfDoc => {
         totalPages = pdfDoc.numPages;
         document.getElementById('total-pages').textContent = totalPages;
 
@@ -28,62 +21,35 @@ try {
             canvas.id = `page-${pageNum}`;
             pdfContainer.appendChild(canvas);
 
-            pdfDoc.getPage(pageNum).then(function (page) {
-                const scale = 1.5;
-                const viewport = page.getViewport({ scale });
-                const context = canvas.getContext('2d');
+            pdfDoc.getPage(pageNum).then(page => {
+                const scale = 1.5, viewport = page.getViewport({ scale });
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
+                page.render({ canvasContext: canvas.getContext('2d'), viewport });
 
-                const renderContext = {
-                    canvasContext: context,
-                    viewport
-                };
-                page.render(renderContext);
-
-                // Hide loading message when all pages are rendered
-                if (pageNum === totalPages) {
-                    loadingMessage.style.display = 'none'; // Hide loading message
-                }
-            }).catch(() => {
-                console.clear();
-            } );
+                if (pageNum === totalPages) loadingMessage.style.display = 'none';
+            }).catch(console.clear);
         }
-    }).catch((err) => {
-        console.clear()
-        const loadingMessage = document.getElementById('loading');
+    })
+    .catch(() => {
         loadingMessage.innerText = "Error while loading PDF...";
         loadingMessage.style.display = 'block';
     });
-} catch {
-    const loadingMessage = document.getElementById('loading');
-    loadingMessage.innerText = "Error while loading PDF...";
-    loadingMessage.style.display = 'block';
-}
 
-
-// Update the page number while scrolling
-document.getElementById('pdf-container').addEventListener('scroll', function () {
+document.getElementById('pdf-container').addEventListener('scroll', () => {
     const pageCanvases = document.querySelectorAll('#pdf-container canvas');
     pageCanvases.forEach((canvas, index) => {
-        const rect = canvas.getBoundingClientRect();
-        if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
+        if (canvas.getBoundingClientRect().top >= 0 && canvas.getBoundingClientRect().top <= window.innerHeight / 2) {
             currentPage = index + 1;
             document.getElementById('current-page').textContent = currentPage;
         }
     });
 });
 
-// Go to specific page
-document.getElementById('goto-button').addEventListener('click', function () {
-    const gotoInput = document.getElementById('goto-input');
-    const pageNum = parseInt(gotoInput.value);
-
+document.getElementById('goto-button').addEventListener('click', () => {
+    const pageNum = parseInt(document.getElementById('goto-input').value);
     if (pageNum >= 1 && pageNum <= totalPages) {
-        const pdfContainer = document.getElementById('pdf-container');
         const targetCanvas = document.getElementById(`page-${pageNum}`);
-
-        // Scroll to the target canvas
         if (targetCanvas) {
             targetCanvas.scrollIntoView({ behavior: 'smooth' });
             currentPage = pageNum;

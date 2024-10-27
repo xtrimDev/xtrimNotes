@@ -190,6 +190,10 @@ form .row input:focus {
   width: 100%; /* Expands the overlay on hover */
 }
 
+.wrapper form .button input:focus + .overlay {
+  width: 100%; /* Expands the overlay on hover */
+}
+
 form .signup-link {
   text-align: center;
   margin-top: 30px;

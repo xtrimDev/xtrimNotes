@@ -756,11 +756,12 @@ input:checked+.slider:before {
 
 .management {
     display: grid;
-    margin: 2rem 2rem 0;
-    padding-right: 4rem;
-    grid-template-columns: auto auto auto auto;
-    gap: 2rem 4rem;
     width: 100%;
+    display: grid;
+    gap: 2rem 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    grid-template-rows: masonry;
+    padding: 2rem;
 }
 
 .nothing {
@@ -804,9 +805,13 @@ button.previous {
     -webkit-user-select: none;
     touch-action: manipulation;
     color: #fff;
-    background-color: #1A1A1A;
+    /* background-color: #1A1A1A; */
     /* width: ; */
     will-change: transform;
+}
+
+button.previous:hover {
+    background-color: #1A1A1A
 }
 
 button.previous:disabled {
@@ -848,22 +853,16 @@ button.previous:active {
     display: block;
     margin: 0;
     height: 100px;
-    width: 100%;
-    /* min-width: 280px; */
-    min-width: 100%;
-    color: #ffffff; /* Text color */
-    max-width: 100%;
+    color: #ffffff;
     background-color: var(--primary-bg);
     border-radius: 15px;
     display: flex;
     flex-direction: row;
-    /* box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, .3); */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, .3));
     cursor: pointer;
     padding-right: 20px !important;
     transition: all 0.3s ease;
-    overflow: hidden;
 }
 
 .management .content:active {
@@ -892,16 +891,13 @@ button.previous:active {
 
 .management .content .icon {
     margin: auto 0;
-    height: 5rem;
     margin-left: 20px;
     border-radius: 15px;
-    min-width: 4rem;
-    max-width: 4rem;
-    width: 5rem;
     background-size: 4rem;
     background-repeat: no-repeat;
     background-position-x: center;
-    background-position-y: center
+    background-position-y: center;
+    font-size: xxx-large;
 }
 
 
@@ -979,38 +975,10 @@ button.previous:active {
     background-image: var(--group)
 }
 
-@media screen and (max-width:1530px) {
-    .left:not(.collapse)+.right .content .management {
-        grid-template-columns: auto auto auto
-    }
-
-    /* .footer {
-        margin-top: 20vh;
-        margin-bottom: 10px
-    } */
-}
-
-@media screen and (max-width:1230px) {
-    .left:not(.collapse)+.right .content .management {
-        grid-template-columns: auto auto
-    }
-
-    .left.collapse+.right .content .management {
-        grid-template-columns: auto auto auto
-    }
-}
-
 @media screen and (max-width:930px) {
-    .left:not(.collapse)+.right .content .management {
-        grid-template-columns: auto auto
-    }
 
     .left.collapse+.right {
         margin-left: 300px !important
-    }
-
-    .left.collapse+.right .content .management {
-        grid-template-columns: auto
     }
 
     .left:not(.collapse) {
@@ -1033,20 +1001,9 @@ button.previous:active {
 }
 
 @media screen and (max-width:630px) {
-    .left:not(.collapse)+.right .content .management {
-        grid-template-columns: auto
-    }
 
     .left-section .search {
         display: none
-    }
-
-    .container .right .header .left-section .line {
-        /* margin-right: 1rem !important */
-    }
-
-    .left.collapse+.right .content .management {
-        grid-template-columns: auto
     }
 
     .footer-item {
@@ -1120,6 +1077,20 @@ button.previous:active {
     }
 }
 
+
+@media screen and (max-width: 392px) {
+    .management {
+        grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    }
+}
+
+
+@media screen and (max-width: 278px) {
+    .right-section .actions {
+        display: none;
+    }
+}
+
 /* Custom Styles for SweetAlert2 Form */
 .swal2-input {
     margin: 2rem 0.2rem;
@@ -1173,21 +1144,23 @@ div:where(.swal2-container) {
     height: 100vh;
     width: 100vw;
     background: rgba(0, 0, 0, 0.8);
-    overflow: auto;
-}
-
-.viewerContainer .pdfViewer {
-    overflow-y: auto;
-    margin-top: 4rem;
-    max-height: calc(100vh - 6.5rem);
-    display: flex;
+    overflow: hidden;
     flex-direction: column;
     align-items: center;
 }
 
+.viewerContainer .pdfViewer {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: calc(100% - 8rem);
+max-width: 100%;
+}
+
 .viewerContainer .pdfViewer > canvas {
-    max-width: 100%;
     display: block;
+    max-width: 100%;
 }
 
 .viewerContainer .pdfViewer > canvas:not(:last-child) {
@@ -1208,7 +1181,7 @@ div:where(.swal2-container) {
     cursor: pointer;
 }
 
-.viewerContainer .close {
+.viewerContainer #closeViewerButton {
     position: fixed;
     top: 8px;
     right: 20px;
@@ -1224,7 +1197,7 @@ div:where(.swal2-container) {
 }
 
 .viewerContainer .titlebar {
-    position: fixed;
+    position: relative;
     top: 0;
     left: 0;
     width: 100%;
@@ -1246,7 +1219,6 @@ div:where(.swal2-container) {
 
 /* Toolbar styles */
 .viewerContainer .toolbar {
-    position: fixed;
     bottom: 0;
     left: 0;
     z-index: 100000;
@@ -1260,6 +1232,7 @@ div:where(.swal2-container) {
     flex-direction: column;
     gap: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    position: inherit;
 }
 
 .viewerContainer button {

@@ -19,7 +19,7 @@
                 <ul>
                     <% for (let i = 0; i < homeFolders.length; i++) { %>
                         <li class="main-menu">
-                            <div class='course' onclick="changePageContent('<%= homeFolders[i].path %>', '<%= homeFolders[i].name %>')"><%= homeFolders[i].name %>
+                            <div class='course' onclick="changePageContent('<%= homeFolders[i].path %>', '<%= homeFolders[i].name %>', true)"><%= homeFolders[i].name %>
                             </div>
                         </li>
                     <% } %>
@@ -62,15 +62,18 @@
           </div>
       </section>
     </div>
-    <div class="viewerContainer" id="viewerContainer">
-        <button class="openInTab" id="openInTab" title="open in new tab"><i class="fas fa-external-link-alt"></i></button>
-
-        <button class="close" id="closeViewerButton">×</button>
-        
+    <div class="viewerContainer" id="viewerContainer">        
         <div class="titlebar">
+            <button class="openInTab" id="openInTab" title="open in new tab"><i class="fas fa-external-link-alt"></i></button>
+
             <div class="pageTitle" id="pageTitle">Document Preview</div>
+
+            <button id="closeViewerButton">×</button>
+
         </div>
         
+        <div class="pdfViewer" id="pdfViewer"></div>
+
         <div class="toolbar">
             <div class="pageInfo">Page: <span id="currentPage">1</span> / <span id="totalPages">1</span></div>
             <div class="pageInfo">
@@ -79,7 +82,6 @@
                 <button id="goto-button">Go</button>
             </div>
         </div>
-        <div class="pdfViewer" id="pdfViewer"></div>
     </div>
     <script src="/js/embed.js"></script>
     <script>
@@ -202,14 +204,14 @@
     
                 const folders = data['folders'].map(item => `
                     <a class="content" onclick="changePageContent('${item.path}', '${item.name}')">
-                        <div class="icon folder"></div>
+                        <div class="icon fa fa-folder-open"></div>
                         <div class="text">${item.name}</div>
                     </a>
                 `).join('');
 
                 const files = data['files'].map(item => `
                     <a class="content" data-embed="${item.uniqueName}" data-name="${item.name}">
-                        <div class="icon file"></div>
+                        <div class="icon fa fa-file-pdf"></div>
                         <div class="text">${item.name}</div>
                     </a>
                 `).join('');
@@ -239,9 +241,12 @@
             });
         }
     
-        function changePageContent(newUrl, newTitle) {
-            const left = document.getElementsByClassName("left");
-            left[0].classList.remove("collapse");
+        function changePageContent(newUrl, newTitle, hide = false) {
+
+            if (hide) {
+                const left = document.getElementsByClassName("left");
+                left[0].classList.remove("collapse");
+            }
 
             history.pushState({ title: newTitle }, newTitle, newUrl); 
             document.title = newTitle; 
