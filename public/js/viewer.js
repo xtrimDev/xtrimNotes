@@ -9,32 +9,53 @@ const lastValue = getLastSegment(currentUrl);
 const loadingMessage = document.getElementById('loading');
 loadingMessage.style.display = 'block';
 
-pdfjsLib.getDocument(`/embed/${lastValue}`).promise
-    .then(pdfDoc => {
-        totalPages = pdfDoc.numPages;
-        document.getElementById('total-pages').textContent = totalPages;
+const cachedPdf = localStorage.getItem(`pdf-${lastValue}`);
 
-        const pdfContainer = document.getElementById('pdf-container');
+if (cachedPdf) {
+    // Load PDF from cache
+    loadAndRenderPDF(new Uint8Array(JSON.parse(cachedPdf)));
+} else {
+    // Fetch PDF and cache it
+    fetch(`/embed/${lastValue}`)
+        .then(response => response.arrayBuffer())
+        .then(buffer => {
+            // Store the PDF data in cache
+            localStorage.setItem(`pdf-${lastValue}`, JSON.stringify(Array.from(new Uint8Array(buffer))));
+            loadAndRenderPDF(new Uint8Array(buffer));
+        })
+        .catch(() => {
+            loadingMessage.innerText = "Error while loading PDF...";
+            loadingMessage.style.display = 'block';
+        });
+}
 
-        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-            const canvas = document.createElement('canvas');
-            canvas.id = `page-${pageNum}`;
-            pdfContainer.appendChild(canvas);
+function loadAndRenderPDF(pdfData) {
+    pdfjsLib.getDocument({ data: pdfData }).promise
+        .then(pdfDoc => {
+            totalPages = pdfDoc.numPages;
+            document.getElementById('total-pages').textContent = totalPages;
 
-            pdfDoc.getPage(pageNum).then(page => {
-                const scale = 1.5, viewport = page.getViewport({ scale });
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
-                page.render({ canvasContext: canvas.getContext('2d'), viewport });
+            const pdfContainer = document.getElementById('pdf-container');
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                const canvas = document.createElement('canvas');
+                canvas.id = `page-${pageNum}`;
+                pdfContainer.appendChild(canvas);
 
-                if (pageNum === totalPages) loadingMessage.style.display = 'none';
-            }).catch(console.clear);
-        }
-    })
-    .catch(() => {
-        loadingMessage.innerText = "Error while loading PDF...";
-        loadingMessage.style.display = 'block';
-    });
+                pdfDoc.getPage(pageNum).then(page => {
+                    const scale = 1.5, viewport = page.getViewport({ scale });
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    page.render({ canvasContext: canvas.getContext('2d'), viewport });
+
+                    if (pageNum === totalPages) loadingMessage.style.display = 'none';
+                }).catch(console.clear);
+            }
+        })
+        .catch(() => {
+            loadingMessage.innerText = "Error while loading PDF...";
+            loadingMessage.style.display = 'block';
+        });
+}
 
 document.getElementById('pdf-container').addEventListener('scroll', () => {
     const pageCanvases = document.querySelectorAll('#pdf-container canvas');

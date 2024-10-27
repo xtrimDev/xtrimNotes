@@ -7,29 +7,51 @@ $(document).ready(function () {
             const embedValue = targetElement.getAttribute('data-embed');
             const embedTitle = targetElement.getAttribute('data-name') || 'Document Preview';
             const url = `/embed/${embedValue}`;
+            const cachedPdf = localStorage.getItem(`pdf-${embedValue}`);
+
             const viewerContainer = $('#viewerContainer');
             const pdfViewer = $('#pdfViewer');
             const pageTitle = $('#pageTitle');
             const openInTab = $('#openInTab');
 
-            pdfViewer.empty().append('<div id="loaderPdf" style="font-size: 1.5rem; color: white; position: absolute; top: 50%;">Loading pdf</div>');
+            pdfViewer.empty().append('<div id="loaderPdf" style="font-size: 1.5rem; color: white; position: absolute; top: 50%;">Loading PDF...</div>');
             pageTitle.text(embedTitle);
             $('#currentPage').text(1);
             $('#totalPages').text(1);
             viewerContainer.show();
             openInTab.attr("onclick", `window.open('/viewer/${embedValue}', '_blank')`);
 
-            pdfjsLib.getDocument(url).promise.then(pdfDoc => {
-                pdf = pdfDoc;
-                totalPages = pdf.numPages;
-                $('#totalPages').text(totalPages);
-                pdfViewer.empty().append('');
-                renderPagesSequentially(1); // Start rendering from page 1
-            }).catch(() => {
-                pdfViewer.html('<div style="font-size: 1.5rem; color: white; position: absolute; top: 50%;">Error loading pdf</div>');
-            });
+            if (cachedPdf) {
+                // Load PDF from localStorage
+                const pdfData = new Uint8Array(JSON.parse(cachedPdf));
+                loadAndRenderPDF(pdfData);
+            } else {
+                // Fetch PDF from server once
+                fetch(url)
+                    .then(response => response.arrayBuffer())
+                    .then(buffer => {
+                        // Cache the data in localStorage
+                        localStorage.setItem(`pdf-${embedValue}`, JSON.stringify(Array.from(new Uint8Array(buffer))));
+                        loadAndRenderPDF(new Uint8Array(buffer));
+                    })
+                    .catch(() => {
+                        pdfViewer.html('<div style="font-size: 1.5rem; color: white; position: absolute; top: 50%;">Error while loading PDF...</div>');
+                    });
+            }
         }
     });
+
+    function loadAndRenderPDF(pdfData) {
+        pdfjsLib.getDocument({data: pdfData}).promise.then(pdfDoc => {
+            pdf = pdfDoc;
+            totalPages = pdf.numPages;
+            $('#totalPages').text(totalPages);
+            $('#pdfViewer').empty();
+            renderPagesSequentially(1);
+        }).catch(() => {
+            $('#pdfViewer').html('<div style="font-size: 1.5rem; color: white; position: absolute; top: 50%;">Error while loading PDF...</div>');
+        });
+    }
 
     function renderPagesSequentially(pageNum) {
         if (pageNum > totalPages) return; // Exit condition

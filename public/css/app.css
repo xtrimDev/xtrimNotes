@@ -851,6 +851,7 @@ button.previous:active {
 
 .management .content {
     display: block;
+    overflow: hidden;
     margin: 0;
     height: 100px;
     color: #ffffff;

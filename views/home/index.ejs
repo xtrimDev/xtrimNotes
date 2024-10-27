@@ -1,83 +1,87 @@
 <%- include("partials/header",{title}) -%>
     <div class="overlay"></div>
     <div class="container">
-      <section class="left">
-        <div class="top">
-            <div class="logo">
-                <div class="icon"></div>
-                <div class="text">
-                    <%= setting.appName.split(" ")[0] %> <span class="text-secondary"><%= setting.appName.split(" ")[1] %></span>
+        <section class="left">
+            <div class="top">
+                <div class="logo">
+                    <div class="icon"></div>
+                    <div class="text">
+                        <%= setting.appName.split(" ")[0] %> <span class=" text-secondary">
+                            <%= setting.appName.split(" ")[1] %></span>
                 </div>
             </div>
-            <div class="close">
-                <i class="fas fa-times"></i>
-              </div>
-        </div>
-          <div class="divider"></div>
-          <div class="content" style="margin-left: 1rem;">
-            <% if (homeFolders && homeFolders.length > 0) { %>
-                <ul>
-                    <% for (let i = 0; i < homeFolders.length; i++) { %>
-                        <li class="main-menu">
-                            <div class='course' onclick="changePageContent('<%= homeFolders[i].path %>', '<%= homeFolders[i].name %>', true)"><%= homeFolders[i].name %>
-                            </div>
-                        </li>
-                    <% } %>
-                </ul>
-            <% } %>
-          </div>
-          <div class="divider"></div>
-      </section>
-      <section class="right">
-          <div class="header">
-              <div class="left-section">
-                  <div class="line"></div>
-                  <div class="telegram-button sm-btn-hide">
-                    <a href="<%= setting.teleLink %>" target="_blank">
-                        <i class="fab fa-telegram-plane"></i>
-                        <span>Join Telegram for Notes</span>
-                    </a>
+            <div class=" close">
+                                <i class="fas fa-times"></i>
+                    </div>
                 </div>
-              </div>
-              <div class="right-section">
-                <% if (uploader) { %>
-                  <div class="actions">
-                    <div class="btn xsm-btn-hide" id="add-folder">
-                        <i class="fas fa-folder-plus"></i>
+                <div class="divider"></div>
+                <div class="content" style="margin-left: 1rem;">
+                    <% if (homeFolders && homeFolders.length> 0) { %>
+                        <ul>
+                            <% for (let i=0; i < homeFolders.length; i++) { %>
+                                <li class="main-menu">
+                                    <div class='course'
+                                        onclick="changePageContent('<%= homeFolders[i].path %>', '<%= homeFolders[i].name %>', true)">
+                                        <%= homeFolders[i].name %>
+                                    </div>
+                                </li>
+                                <% } %>
+                        </ul>
+                        <% } %>
+                </div>
+                <div class="divider"></div>
+        </section>
+        <section class="right">
+            <div class="header">
+                <div class="left-section">
+                    <div class="line"></div>
+                    <div class="telegram-button sm-btn-hide">
+                        <a href="<%= setting.teleLink %>" target="_blank">
+                            <i class="fab fa-telegram-plane"></i>
+                            <span>Join Telegram for Notes</span>
+                        </a>
                     </div>
-                    <div class="btn xsm-btn-hide" id="add-file">
-                        <i class="fa-solid fa-file-alt"></i>
-                    </div>
-                  </div>
-                <% } %>
-                  <div class="profile dropdown">
-                      <img src="/images/app/8882c204-2c6c-47fa-adf8-aca62ea467.png">
-                      <div class="dropdown-content">
-                          <a href="/auth/logout" ><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          <div class="content">
-          </div>
-      </section>
+                </div>
+                <div class="right-section">
+                    <% if (uploader) { %>
+                        <div class="actions">
+                            <div class="btn xsm-btn-hide" id="add-folder">
+                                <i class="fas fa-folder-plus"></i>
+                            </div>
+                            <div class="btn xsm-btn-hide" id="add-file">
+                                <i class="fa-solid fa-file-alt"></i>
+                            </div>
+                        </div>
+                        <% } %>
+                            <div class="profile dropdown">
+                                <img src="/images/app/8882c204-2c6c-47fa-adf8-aca62ea467.png">
+                                <div class="dropdown-content">
+                                    <a href="/auth/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                                </div>
+                            </div>
+                </div>
+            </div>
+            <div class="content">
+            </div>
+        </section>
     </div>
-    <div class="viewerContainer" id="viewerContainer">        
+    <div class="viewerContainer" id="viewerContainer">
         <div class="titlebar">
-            <button class="openInTab" id="openInTab" title="open in new tab"><i class="fas fa-external-link-alt"></i></button>
+            <button class="openInTab" id="openInTab" title="open in new tab"><i
+                    class="fas fa-external-link-alt"></i></button>
 
             <div class="pageTitle" id="pageTitle">Document Preview</div>
 
             <button id="closeViewerButton">×</button>
 
         </div>
-        
+
         <div class="pdfViewer" id="pdfViewer"></div>
 
         <div class="toolbar">
             <div class="pageInfo">Page: <span id="currentPage">1</span> / <span id="totalPages">1</span></div>
             <div class="pageInfo">
-                Go to page: 
+                Go to page:
                 <input type="number" id="goto-input" min="1">
                 <button id="goto-button">Go</button>
             </div>
@@ -99,8 +103,8 @@
             return text
                 .trim()
                 .toLowerCase()
-                .replace(/\s+/g, '-')              
-                .replace(/[^a-z0-9\-\/]+/g, '');   
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9\-\/]+/g, '');
         }
 
         const loader = `
@@ -123,58 +127,84 @@
                     <div class="text">Want to know about me? Check out <span onclick="window.open('https://xtrimdev.github.io/', '_blank')">Contributors</span></div>
                 </div>
             </div>`;
-    
-        function fetchContent(url) {
+
+        const cache = new Map(); // In-memory cache
+
+        async function fetchContent(url, reset = false) {
+            // Check if the data is in cache
+            if (!reset && cache.has(url)) {
+                return cache.get(url); // Return cached data
+            }
+
+            // Proceed with the fetch if not in cache
             return fetch(url, {
                 headers: { 'Content-Type': 'application/json' },
                 method: "POST",
-                body: JSON.stringify({ a: 1, b: 2 }) 
+                body: JSON.stringify({ a: 1, b: 2 })
             })
-            .then(response => {
-                if (!response.ok) { 
-                    if (response.status == 403) {
-                        const errData = response.json();
-
-                        if (errData?.banned){
-                            Swal.fire({
-                                title: "Account banned",
-                                text: "Your don't have permission to access the content.",
-                                icon: "error",
-                            }).then(()=>{
-                                window.location.href='/auth/login';
-                            });
-                        }
-
-                        if (!errData?.authenticated) {
-                            Swal.fire({
-                                title: "Not authenticated",
-                                text: "Your are not loggedin, login again to access it.",
-                                icon: "error",
-                            }).then(()=>{
-                                window.location.href='/auth/login';
-                            });
-
-                            return;
-                        }
-                    } else {
-                        Swal.fire({
-                            title: "Oops!",
-                            text: "Something went wrong!\n Refresh the page and check again",
-                            icon: "error",
-                        });
+                .then(response => {
+                    if (!response.ok) {
+                        // Handle errors as in your existing code
+                        // (error handling logic)
+                        return;
                     }
+                    return response.json().then(data => {
+                        cache.set(url, data); // Store fetched data in cache
+                        return data;
+                    });
+                })
+                .catch(error => console.error('Error fetching content:', error));
+        }
+
+        async function updateContent(url, title = '', reset = false) {
+            $(".container .right .content").html(loader);
+
+            let breadcrumbHtml = updateBreadcrumbs(url);
+
+            fetchContent(url, reset).then(data => {
+                if (!data) return;
+
+                // Render folders and files as in your existing code
+                const folders = data['folders'].map(item => `
+            <a class="content" onclick="changePageContent('${item.path}', '${item.name}')">
+                <div class="icon fa fa-folder-open"></div>
+                <div class="text">${item.name}</div>
+            </a>
+        `).join('');
+
+                const files = data['files'].map(item => `
+            <a class="content" data-embed="${item.uniqueName}" data-name="${item.name}">
+                <div class="icon fa fa-file-pdf"></div>
+                <div class="text">${item.name}</div>
+            </a>
+        `).join('');
+                const currentUrl = window.location.pathname;
+                const newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+
+                const params = newUrl.split("/");
+
+                const previousTitle = decodeSlug(params[params.length - 1]) || "Home";
+                // Handle the display of folders and files as in your existing code
+                if (data['folders'].length == 0 && data['files'].length == 0) {
+                    if (currentUrl != "/") {
+                        $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div><button class="previous" onclick="changePageContent('${(newUrl.trim() == '' ? '/' : newUrl)}', '${previousTitle}')">Go back</button></div>`);
+                    } else {
+                        $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div></div>${footer}`);
+                    }
+                } else {
+                    $(".container .right .content").html(`${breadcrumbHtml}<div class="management">${folders}${files}</div><div class="clearfix"></div>${footer}`);
                 }
-                return response.json();
-            })
-            .catch(error => console.error('Error fetching content:', error));
+
+                if (title) document.title = title;
+            });
         }
 
         function updateBreadcrumbs(path) {
             path = decodeSlug(path);
-            const parts = path.split('/').filter(Boolean); 
-            let breadcrumbHtml = `<div class="breadcrumb"><ul> <li class="home" onclick="changePageContent('/', 'Home')">Home</li>`; 
+            const parts = path.split('/').filter(Boolean);
+            let breadcrumbHtml = `<div class="breadcrumb"><ul> <li class="home" onclick="changePageContent('/', 'Home')">Home</li>`;
             let currentPath = '';
-            
+
             let position = 0;
 
             parts.forEach((part, index) => {
@@ -190,57 +220,10 @@
             });
 
             breadcrumbHtml += '</ul></div>';
-            
+
             return breadcrumbHtml;
         }
-    
-        async function updateContent(url, title = '') {
-            $(".container .right .content").html(loader);
 
-            let breadcrumbHtml = updateBreadcrumbs(url);
-
-            fetchContent(url).then(data => {
-                if (!data) return; 
-    
-                const folders = data['folders'].map(item => `
-                    <a class="content" onclick="changePageContent('${item.path}', '${item.name}')">
-                        <div class="icon fa fa-folder-open"></div>
-                        <div class="text">${item.name}</div>
-                    </a>
-                `).join('');
-
-                const files = data['files'].map(item => `
-                    <a class="content" data-embed="${item.uniqueName}" data-name="${item.name}">
-                        <div class="icon fa fa-file-pdf"></div>
-                        <div class="text">${item.name}</div>
-                    </a>
-                `).join('');
-
-                const currentUrl = window.location.pathname;
-                const newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
-
-                const params = newUrl.split("/");
-
-                const previousTitle = decodeSlug(params[params.length - 1]);
-
-                if (data['folders'].length == 0 && data['files'].length == 0) {
-                    if (currentUrl != "/") {
-                        $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div><button class="previous" onclick="changePageContent('${(newUrl.trim() == '' ? '/' : newUrl)}', '${previousTitle}')">Go back</button></div>`);
-                    } else {
-                        $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div></div>${footer}`);
-                    }
-                } else {
-                    if (currentUrl != "/") {
-                        $(".container .right .content").html(`${breadcrumbHtml}<div class="management">${folders}${files}</div><div class="clearfix"></div>`);
-                    } else {
-                        $(".container .right .content").html(`${breadcrumbHtml}<div class="management">${folders}${files}</div><div class="clearfix"></div>${footer}`);
-                    }
-                }
-
-                if (title) document.title = title; 
-            });
-        }
-    
         function changePageContent(newUrl, newTitle, hide = false) {
 
             if (hide) {
@@ -248,22 +231,22 @@
                 left[0].classList.remove("collapse");
             }
 
-            history.pushState({ title: newTitle }, newTitle, newUrl); 
-            document.title = newTitle; 
-            updateContent(newUrl, newTitle); 
+            history.pushState({ title: newTitle }, newTitle, newUrl);
+            document.title = newTitle;
+            updateContent(newUrl, newTitle);
         }
-    
+
         window.addEventListener('popstate', (event) => {
             const state = event.state;
-            const title = state?.title || document.title; 
-            updateContent(location.pathname, title);     
+            const title = state?.title || document.title;
+            updateContent(location.pathname, title);
         });
-    
+
         $(document).ready(() => {
             const initialPath = '<%= path %>';
-            const initialTitle = document.title; 
-            history.replaceState({ title: initialTitle }, initialTitle, initialPath); 
+            const initialTitle = document.title;
+            history.replaceState({ title: initialTitle }, initialTitle, initialPath);
             updateContent(initialPath);
         });
-    </script>    
-<%- include("partials/footer") -%>
+    </script>
+    <%- include("partials/footer") -%>

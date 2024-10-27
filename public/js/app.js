@@ -115,7 +115,7 @@ $(document).ready(function () {
                                 showConfirmButton: false,
                                 timer: 1500,
                             }).then(() => {
-                                updateContent(window.location.pathname, document.title);
+                                updateContent(window.location.pathname, document.title, true);
                             });
                         } else {
                             Swal.fire({
@@ -230,7 +230,7 @@ $(document).ready(function () {
                                 showConfirmButton: false,
                                 timer: 1500,
                             }).then(() => {
-                                updateContent(window.location.pathname, document.title);
+                                updateContent(window.location.pathname, document.title, true);
                             });
                         } else {
                             Swal.fire({
