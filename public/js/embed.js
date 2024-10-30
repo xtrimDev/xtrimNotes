@@ -42,7 +42,7 @@ $(document).ready(function () {
         loadBookmarks();
        
 
-            pdfViewer.empty().append('<div id="loaderPdf" style="font-size: 1.5rem; color: white; position: absolute; top: 50%;">Loading PDF...</div>');
+            pdfViewer.empty().append('<div id="loaderPdf" style="font-size: 1.5rem; color: white; position: relative; top: 50%;">Loading PDF...</div>');
             pageTitle.text(embedTitle);
             $('#currentPage').text(1);
             $('#totalPages').text(1);
@@ -63,7 +63,7 @@ $(document).ready(function () {
                         loadAndRenderPDF(new Uint8Array(buffer));
                     })
                     .catch(() => {
-                        pdfViewer.html('<div style="font-size: 1.5rem; color: white; position: absolute; top: 50%;">Error while loading PDF...</div>');
+                        pdfViewer.html('<div style="font-size: 1.5rem; color: white; position: relative; top: 50%;">Error while loading PDF...</div>');
                     });
             }
         }
@@ -77,7 +77,7 @@ $(document).ready(function () {
             $('#pdfViewer').empty();
             renderPagesSequentially(1);
         }).catch(() => {
-            $('#pdfViewer').html('<div style="font-size: 1.5rem; color: white; position: absolute; top: 50%;">Error while loading PDF...</div>');
+            $('#pdfViewer').html('<div style="font-size: 1.5rem; color: white; position: relative; top: 50%;">Error while loading PDF...</div>');
         });
     }
 
