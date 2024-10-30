@@ -69,7 +69,7 @@
         <div class="titlebar">
             <button class="openInTab" id="openInTab" title="open in new tab"><i
                     class="fas fa-external-link-alt"></i></button>
-
+                    
             <div class="pageTitle" id="pageTitle">Document Preview</div>
 
             <button id="closeViewerButton">×</button>
@@ -155,7 +155,44 @@
                 })
                 .catch(error => console.error('Error fetching content:', error));
         }
+        function toggleBookmark(uniqueName) {
+            console.log(uniqueName)
+            const targetDiv = document.querySelector(".titlebar");
+            console.log(targetDiv)
+        const starIcon = document.getElementById(`star-${uniqueName}`);
+        console.log(starIcon)
+        let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+        
+        if (bookmarks.includes(uniqueName)) {
+            // Remove from bookmarks
+            bookmarks = bookmarks.filter(item => item !== uniqueName);
+            starIcon.classList.remove('fa-solid');
+            starIcon.classList.add('fa-regular');
 
+        } else {
+            // Add to bookmarks
+            bookmarks.push(uniqueName);
+            starIcon.classList.add('fa-solid');
+        }
+        
+        // Update localStorage with the modified bookmarks list
+        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+    }
+       
+    async function loadBookmarks() {
+        const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+        console.log(bookmarks)
+       await bookmarks.forEach(uniqueName => {
+        const starIcon = document.getElementById(`star-${uniqueName}`);
+        const star = document.querySelector(`.fa-star`);
+if (starIcon) { 
+    starIcon.classList.add('fa-solid');
+}else{
+star.classList.add("fa-regular");
+}
+
+        });
+    }
         async function updateContent(url, title = '', reset = false) {
             $(".container .right .content").html(loader);
 
@@ -171,18 +208,28 @@
                 <div class="text">${item.name}</div>
             </a>
         `).join('');
+ 
 
-                const files = data['files'].map(item => `
-            <a class="content" data-embed="${item.uniqueName}" data-name="${item.name}">
-                <div class="icon fa fa-file-pdf"></div>
-                <div class="text">${item.name}</div>
-            </a>
-        `).join('');
+        const files = data['files'].map(item => `
+        <div class="file-container">
+    <a class="content" data-embed="${item.uniqueName}" data-name="${item.name}">
+        <div class="icon fa fa-file-pdf"></div>
+        <div class="text">${item.name}</div>
+    </a>
+     
+    </div>
+`).join('');
+
                 const currentUrl = window.location.pathname;
                 const newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
 
                 const params = newUrl.split("/");
 
+
+       
+
+    // Load bookmarks on page load
+  
                 const previousTitle = decodeSlug(params[params.length - 1]) || "Home";
                 // Handle the display of folders and files as in your existing code
                 if (data['folders'].length == 0 && data['files'].length == 0) {
@@ -197,8 +244,9 @@
 
                 if (title) document.title = title;
             });
+      
         }
-
+       
         function updateBreadcrumbs(path) {
             path = decodeSlug(path);
             const parts = path.split('/').filter(Boolean);
@@ -234,12 +282,14 @@
             history.pushState({ title: newTitle }, newTitle, newUrl);
             document.title = newTitle;
             updateContent(newUrl, newTitle);
+            
         }
 
         window.addEventListener('popstate', (event) => {
             const state = event.state;
             const title = state?.title || document.title;
             updateContent(location.pathname, title);
+            
         });
 
         $(document).ready(() => {
@@ -247,6 +297,9 @@
             const initialTitle = document.title;
             history.replaceState({ title: initialTitle }, initialTitle, initialPath);
             updateContent(initialPath);
+        
         });
+       
+
     </script>
     <%- include("partials/footer") -%>

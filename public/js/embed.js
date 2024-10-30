@@ -3,16 +3,40 @@ $(document).ready(function () {
 
     document.addEventListener("click", function (event) {
         let targetElement = event.target.closest('[data-embed]');
+      
         if (targetElement) {
+            const targetDiv = document.querySelector(".titlebar");
+           
             const embedValue = targetElement.getAttribute('data-embed');
+            const innerDiv = document.getElementById(`star-${embedValue}`);
             const embedTitle = targetElement.getAttribute('data-name') || 'Document Preview';
             const url = `/embed/${embedValue}`;
             const cachedPdf = localStorage.getItem(`pdf-${embedValue}`);
-
             const viewerContainer = $('#viewerContainer');
             const pdfViewer = $('#pdfViewer');
             const pageTitle = $('#pageTitle');
             const openInTab = $('#openInTab');
+        if (innerDiv==null) { 
+            // Create button
+            const button = document.createElement("button");
+            button.className = "bookmark-btn";
+            button.onclick = () => toggleBookmark(embedValue); // Set the onclick function
+            
+            // Create icon element
+            const icon = document.createElement("i");
+            icon.className = "icon fa-star";
+            icon.id = `star-${embedValue}`;
+            
+            // Append icon to button, then button to targetDiv
+            button.appendChild(icon);
+            if (targetDiv.children.length >= 1) {
+                targetDiv.insertBefore(button, targetDiv.children[1]);
+            } else {
+                targetDiv.appendChild(button); // Fallback if there's no second element
+            }
+        }
+        loadBookmarks();
+       
 
             pdfViewer.empty().append('<div id="loaderPdf" style="font-size: 1.5rem; color: white; position: absolute; top: 50%;">Loading PDF...</div>');
             pageTitle.text(embedTitle);

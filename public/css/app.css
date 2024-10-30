@@ -256,6 +256,25 @@ body {
     cursor: pointer;
 }
 
+.viewerContainer .bookmark-btn {
+    background: none;
+    position: absolute;
+    border: none;
+    cursor: pointer;
+    left: 60px;
+    top: 10px;
+    font-size: 16px;
+}
+
+.content .icon {
+    margin-right: 1px;
+}
+
+ .bookmark-btn .fa-star-o {
+    color: #ccc;
+}
+
+
 .content ul li.main-menu .course:active {
     scale: 0.95;
     transition: scale 0.1s ease-in-out;
@@ -272,8 +291,9 @@ body {
 }
 
 .course.file {
-    background-image: var(--file-left-icon) !important
+    background-image: var(--file-left-icon) !important;
 }
+
 
 .content ul li.main-menu .course .text {
     display: inline-block;
@@ -1246,9 +1266,9 @@ max-width: 100%;
     border-radius: 5px;
 }
 
-.viewerContainer button:hover {
+/* .viewerContainer button:hover {
     background: rgba(0, 0, 0, 0.8);
-}
+} */
 
 .viewerContainer .pageInfo {
     font-size: 16px;
