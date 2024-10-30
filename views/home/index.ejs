@@ -67,12 +67,18 @@
     </div>
     <div class="viewerContainer" id="viewerContainer">
         <div class="titlebar">
-            <button class="openInTab" id="openInTab" title="open in new tab"><i
+            <div class="leftside">
+                <button class="openInTab" id="openInTab" title="open in new tab"><i
                     class="fas fa-external-link-alt"></i></button>
+            </div>
+            
                     
             <div class="pageTitle" id="pageTitle">Document Preview</div>
 
-            <button id="closeViewerButton">×</button>
+            <div class="rightside">
+                <button id="closeViewerButton" title="close"><i
+                    class="fas fa-close"></i></button></button>
+            </div>
 
         </div>
 
@@ -156,11 +162,8 @@
                 .catch(error => console.error('Error fetching content:', error));
         }
         function toggleBookmark(uniqueName) {
-            console.log(uniqueName)
             const targetDiv = document.querySelector(".titlebar");
-            console.log(targetDiv)
         const starIcon = document.getElementById(`star-${uniqueName}`);
-        console.log(starIcon)
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
         
         if (bookmarks.includes(uniqueName)) {
@@ -181,7 +184,6 @@
        
     async function loadBookmarks() {
         const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-        console.log(bookmarks)
        await bookmarks.forEach(uniqueName => {
         const starIcon = document.getElementById(`star-${uniqueName}`);
         const star = document.querySelector(`.fa-star`);

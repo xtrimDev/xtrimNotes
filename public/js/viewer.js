@@ -48,7 +48,7 @@ function loadAndRenderPDF(pdfData) {
                     page.render({ canvasContext: canvas.getContext('2d'), viewport });
 
                     if (pageNum === totalPages) loadingMessage.style.display = 'none';
-                }).catch(console.clear);
+                }).catch(console.clear());
             }
         })
         .catch(() => {

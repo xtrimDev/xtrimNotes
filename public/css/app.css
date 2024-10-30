@@ -4,6 +4,17 @@
     box-sizing: border-box
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+*::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  * {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
 .dark {
     --main-bg: #25252C;
     --primary-bg: #181A1E;
@@ -1082,6 +1093,10 @@ button.previous:active {
     .left.collapse + .right .sm-btn-hide {
         display: none;
     }
+
+    .viewerContainer .titlebar .leftside {
+        gap: 0 !important;
+    }
 }
 
 @media screen and (max-width: 527px) {
@@ -1164,12 +1179,9 @@ div:where(.swal2-container) {
 
 .viewerContainer .bookmark-btn {
     background: none;
-    position: absolute;
     border: none;
     cursor: pointer;
-    left: 60px;
-    top: 10px;
-    font-size: 16px;
+    font-size: 19px;
 }
 
 .viewerContainer .pdfViewer {
@@ -1177,7 +1189,7 @@ div:where(.swal2-container) {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-height: calc(100% - 8rem);
+    max-height: calc(100% - 8.5rem);
 max-width: 100%;
 }
 
@@ -1187,13 +1199,13 @@ max-width: 100%;
 }
 
 .viewerContainer .pdfViewer > canvas:not(:last-child) {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .viewerContainer .openInTab {
-    position: fixed;
-    top: 15px;
-    left: 20px;
+    /* position: fixed; */
+    /* top: 15px; */
+    /* left: 20px; */
     z-index: 11;
     font-size: 19px;
     color: white;
@@ -1205,16 +1217,16 @@ max-width: 100%;
 }
 
 .viewerContainer #closeViewerButton {
-    position: fixed;
-    top: 8px;
-    right: 20px;
-    z-index: 11;
-    font-size: 40px;
+    /* position: fixed; */
+    /* top: 8px; */
+    /* right: 20px; */
+    /* z-index: 11; */
+    font-size: 24px;
     color: white;
-    background: rgba(0, 0, 0, 0.5);
+    /* background: rgba(0, 0, 0, 0.5); */
     border: none;
-    border-radius: 50%;
-    padding: 0 14px;
+    /* border-radius: 50%; */
+    /* padding: 0 14px; */
     /* padding: 10px; */
     cursor: pointer;
 }
@@ -1226,14 +1238,18 @@ max-width: 100%;
     width: 100%;
     background: rgba(0, 0, 0, 0.7);
     color: white;
-    padding: 12px 8px;
-    padding-top: 15px;
+    padding: 0 8px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    /* gap: 10px; */
     text-transform: capitalize;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.viewerContainer .titlebar .leftside {
+    display: flex;
+    gap: 20px;
 }
 
 .viewerContainer .titlebar .leftbtn {
@@ -1242,9 +1258,6 @@ max-width: 100%;
 
 /* Toolbar styles */
 .viewerContainer .toolbar {
-    bottom: 0;
-    left: 0;
-    z-index: 100000;
     width: 100%;
     background: rgba(0, 0, 0, 0.7);
     color: white;
@@ -1255,7 +1268,7 @@ max-width: 100%;
     flex-direction: column;
     gap: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-    position: inherit;
+    /* position: inherit; */
 }
 
 .viewerContainer button {
@@ -1274,6 +1287,33 @@ max-width: 100%;
 
 .viewerContainer .pageInfo {
     font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    max-width: 100%;
+    flex-wrap: nowrap;
+}
+
+#goto-input {
+    max-width: 58%;
+}
+
+
+#goto-input,
+#goto-button {
+    padding: 5px;
+}
+
+#goto-button {
+    border: 1px solid;
+}
+
+.viewerContainer .pageTitle {
+    white-space: nowrap;       /* Prevents the text from wrapping to a new line */
+    overflow: hidden;          /* Hides any overflowing text */
+    text-overflow: ellipsis;   /* Adds an ellipsis (...) at the end */
+    width: 200px;    
 }
 
 /** =======Animations======= **/

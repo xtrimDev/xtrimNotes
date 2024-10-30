@@ -4,6 +4,7 @@ body {
     padding: 0;
     display: flex;
     flex-direction: column;
+    font-family: Arial, Helvetica, sans-serif;
     height: 100vh;
 }
 
@@ -11,14 +12,20 @@ body {
     position: fixed;
     top: 0;
     left: 0;
+    font-size: 19px;
     width: 100%;
-    background-color: #333;
+    background-color: (0, 0, 0, 0.7);
     color: white;
     text-align: center;
+    box-shadow: 2px 1px  10px rgba(201, 199, 199, 0.5);
+
     padding: 10px;
-    font-size: 20px;
     z-index: 10;
     text-transform: capitalize;
+    white-space: nowrap;
+    padding: 10px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #page-number {
@@ -34,16 +41,28 @@ body {
     z-index: 10;
 }
 
+#goto-input {
+    max-width: 50%;
+}
+
 #goto-container {
     position: fixed;
     bottom: 0;
+    text-wrap-mode: nowrap;
     left: 0;
     width: 100%;
     background-color: #444;
     color: white;
     text-align: center;
-    padding: 10px;
-    z-index: 10;
+    padding: 10px 0;
+    z-index: 11;
+    max-height: 41px;;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: nowrap; 
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
 }
 
 #pdf-container {

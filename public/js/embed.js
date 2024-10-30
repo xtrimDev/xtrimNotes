@@ -5,10 +5,12 @@ $(document).ready(function () {
         let targetElement = event.target.closest('[data-embed]');
       
         if (targetElement) {
-            const targetDiv = document.querySelector(".titlebar");
+            const targetDiv = document.querySelector(".titlebar .leftside");
+
+            $(".bookmark-btn").remove();
            
             const embedValue = targetElement.getAttribute('data-embed');
-            const innerDiv = document.getElementById(`star-${embedValue}`);
+            const innerDiv = document.getElementsByClassName(`bookmark-btn`)[0];
             const embedTitle = targetElement.getAttribute('data-name') || 'Document Preview';
             const url = `/embed/${embedValue}`;
             const cachedPdf = localStorage.getItem(`pdf-${embedValue}`);
@@ -16,10 +18,12 @@ $(document).ready(function () {
             const pdfViewer = $('#pdfViewer');
             const pageTitle = $('#pageTitle');
             const openInTab = $('#openInTab');
+            
         if (innerDiv==null) { 
             // Create button
             const button = document.createElement("button");
             button.className = "bookmark-btn";
+            button.title = "Bookmark"
             button.onclick = () => toggleBookmark(embedValue); // Set the onclick function
             
             // Create icon element
