@@ -28,7 +28,7 @@ $(document).ready(function () {
             
             // Create icon element
             const icon = document.createElement("i");
-            icon.className = "icon fa-star";
+            icon.className = "icon fa-star fa-regular";
             icon.id = `star-${embedValue}`;
             
             // Append icon to button, then button to targetDiv
