@@ -256,15 +256,7 @@ body {
     cursor: pointer;
 }
 
-.viewerContainer .bookmark-btn {
-    background: none;
-    position: absolute;
-    border: none;
-    cursor: pointer;
-    left: 60px;
-    top: 10px;
-    font-size: 16px;
-}
+
 
 .content .icon {
     margin-right: 1px;
@@ -1168,6 +1160,16 @@ div:where(.swal2-container) {
     overflow: hidden;
     flex-direction: column;
     align-items: center;
+}
+
+.viewerContainer .bookmark-btn {
+    background: none;
+    position: absolute;
+    border: none;
+    cursor: pointer;
+    left: 60px;
+    top: 10px;
+    font-size: 16px;
 }
 
 .viewerContainer .pdfViewer {
