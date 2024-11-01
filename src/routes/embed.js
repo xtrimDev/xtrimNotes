@@ -2,13 +2,15 @@ const path = require('path');
 const fs = require('fs');
 
 const files = require("../models/files");
+const NodeCache = require("node-cache");
 
 const express = require("express");
 const { ensureAuthenticatedForFetching } = require('../middleware/auth');
 
 const router = new express.Router();
+const myCache = new NodeCache({ stdTTL: 90 });
 
-router.get("/:uniqueName", async (req, res) => {
+router.post("/:uniqueName", async (req, res) => {
     try {
         const result = await ensureAuthenticatedForFetching(req, res);
 
@@ -16,8 +18,25 @@ router.get("/:uniqueName", async (req, res) => {
             return res.status(403).json(result);
         }
 
+        if (req?.user?.role == "owner") {
+            accessLevel = ["owner","admin", "user"];
+        }  else if (req?.user?.role == "admin") {
+            accessLevel = ["admin", "user"];
+        } else {
+            accessLevel = ["user"];
+        } 
+
         const uniqueName = req.params.uniqueName;
-        const fileDbData = await files.findOne({ uniqueName });
+        let fileDbData = {};
+
+        if (accessLevel[0] == "user" && myCache.has(`${accessLevel[0]}-${uniqueName}`)) {
+            fileDbData = myCache.get(`${accessLevel[0]}-${uniqueName}`);
+        } else {
+            fileDbData = await files.findOne({ uniqueName, accessLevel: { $in: accessLevel } }).select("url name -_id");
+            
+            if (accessLevel[0] == "user")
+                myCache.set(`${accessLevel[0]}-${uniqueName}`,fileDbData)
+        }
 
         if (fileDbData) {
             const pdfPath = path.join(__dirname, '/../../uploads/', fileDbData.url);

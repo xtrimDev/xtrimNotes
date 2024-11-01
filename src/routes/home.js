@@ -4,9 +4,11 @@ const router = new express.Router();
 
 const Folder = require("../models/folders");
 const files = require("../models/files");
+const NodeCache = require("node-cache");
 const { getFolderTree, getHomeFolders } = require("../controller/folder");
 
 require("dotenv").config();
+const myCache = new NodeCache({ stdTTL: 90 });
 
 router.get("/*", ensureNotAuthenticated, async (req, res) => {
     try {
@@ -50,37 +52,51 @@ router.post('/*', async (req, res) => {
 
         const requestedPath = `/${req.params[0]}`.trim();
 
-        if (req.user.role == "owner") {
+        if (req?.user?.role == "owner") {
             accessLevel = ["owner","admin", "user"];
-        }  else if (req.user.role == "admin") {
+        }  else if (req?.user?.role == "admin") {
             accessLevel = ["admin", "user"];
         } else {
             accessLevel = ["user"];
         } 
 
-        if (requestedPath === '/' || requestedPath === '') {
-            const rootFolders = await Folder.find({ parentFolder: null, accessLevel: { $in: accessLevel }}).select("name path -_id");
-            const rootFiles = await files.find({ folder: null, accessLevel: { $in: accessLevel } }).select("name uniqueName -_id");
+        if (accessLevel[0] == "user" && myCache.has(`${accessLevel[0]}-${requestedPath}`)) {
+            return res.status(200).send(myCache.get(`${accessLevel[0]}-${requestedPath}`)); 
+        } else {
+            if (requestedPath === '/' || requestedPath === '') {
+                const rootFolders = await Folder.find({ parentFolder: null, accessLevel: { $in: accessLevel }}).select("name path -_id");
+                const rootFiles = await files.find({ folder: null, accessLevel: { $in: accessLevel } }).select("name uniqueName -_id");
+    
+                const data = {
+                    folders: rootFolders,
+                    files: rootFiles
+                };
 
-            return res.status(200).json({
-                folders: rootFolders,
-                files: rootFiles
-            }); 
-        }
+                if (accessLevel[0] == "user")
+                    myCache.set(`${accessLevel[0]}-${requestedPath}`, data)
 
-        const parentFolder = await Folder.findOne({ path: requestedPath, accessLevel: { $in: accessLevel } }).select("_id");
+                return res.status(200).json(data); 
+            }
+    
+            const parentFolder = await Folder.findOne({ path: requestedPath, accessLevel: { $in: accessLevel } }).select("_id");
+    
+            if (!parentFolder) {
+                return res.status(404).render("errors/404");
+            }
+    
+            const subFolders = await Folder.find({ parentFolder: parentFolder._id, accessLevel: { $in: accessLevel} }).select("name path -_id");
+            const subFiles = await files.find({ folder: parentFolder._id, accessLevel: { $in: accessLevel } }).select("name uniqueName -_id");
+    
+            const data = {
+                folders: subFolders,
+                files: subFiles
+            };
 
-        if (!parentFolder) {
-            return res.status(404).render("errors/404");
-        }
+            if (accessLevel[0] == "user")
+                myCache.set(`${accessLevel[0]}-${requestedPath}`, data)
 
-        const subFolders = await Folder.find({ parentFolder: parentFolder._id, accessLevel: { $in: accessLevel} }).select("name path -_id");
-        const subFiles = await files.find({ folder: parentFolder._id, accessLevel: { $in: accessLevel } }).select("name uniqueName -_id");
-
-        res.status(200).json({
-            folders: subFolders,
-            files: subFiles
-        });
+            res.status(200).json(data);
+        } 
     } catch (error) {
         return res.status(500).render("errors/500");
     }

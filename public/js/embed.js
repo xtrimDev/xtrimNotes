@@ -55,7 +55,7 @@ $(document).ready(function () {
                 loadAndRenderPDF(pdfData);
             } else {
                 // Fetch PDF from server once
-                fetch(url)
+                fetch(url, {method: "POST"})
                     .then(response => response.arrayBuffer())
                     .then(buffer => {
                         // Cache the data in localStorage

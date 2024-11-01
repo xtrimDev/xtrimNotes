@@ -134,15 +134,13 @@
                 </div>
             </div>`;
 
-        const cache = new Map(); // In-memory cache
+        const cache = new Map(); 
 
         async function fetchContent(url, reset = false) {
-            // Check if the data is in cache
             if (!reset && cache.has(url)) {
-                return cache.get(url); // Return cached data
+                return cache.get(url); 
             }
 
-            // Proceed with the fetch if not in cache
             return fetch(url, {
                 headers: { 'Content-Type': 'application/json' },
                 method: "POST",
@@ -150,12 +148,40 @@
             })
                 .then(response => {
                     if (!response.ok) {
-                        // Handle errors as in your existing code
-                        // (error handling logic)
-                        return;
+                        if (response.status == 403) {
+                            const errData = response.json();
+
+                            if (errData?.banned){
+                                Swal.fire({
+                                    title: "Account banned",
+                                    text: "Your don't have permission to access the content.",
+                                    icon: "error",
+                                }).then(()=>{
+                                    window.location.href='/auth/login';
+                                });
+                            }
+
+                            if (!errData?.authenticated) {
+                                Swal.fire({
+                                    title: "Not authenticated",
+                                    text: "Your are not loggedin, login again to access it.",
+                                    icon: "error",
+                                }).then(()=>{
+                                    window.location.href='/auth/login';
+                                });
+
+                                return;
+                            }
+                        } else {
+                            Swal.fire({
+                                title: "Oops!",
+                                text: "Something went wrong!\n Refresh the page and check again",
+                                icon: "error",
+                            });
+                        }
                     }
                     return response.json().then(data => {
-                        cache.set(url, data); // Store fetched data in cache
+                        cache.set(url, data);  
                         return data;
                     });
                 })
@@ -167,18 +193,15 @@
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
         
         if (bookmarks.includes(uniqueName)) {
-            // Remove from bookmarks
             bookmarks = bookmarks.filter(item => item !== uniqueName);
             starIcon.classList.remove('fa-solid');
             starIcon.classList.add('fa-regular');
 
         } else {
-            // Add to bookmarks
             bookmarks.push(uniqueName);
             starIcon.classList.add('fa-solid');
         }
         
-        // Update localStorage with the modified bookmarks list
         localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
     }
        
@@ -203,7 +226,6 @@ star.classList.add("fa-regular");
             fetchContent(url, reset).then(data => {
                 if (!data) return;
 
-                // Render folders and files as in your existing code
                 const folders = data['folders'].map(item => `
             <a class="content" onclick="changePageContent('${item.path}', '${item.name}')">
                 <div class="icon fa fa-folder-open"></div>
@@ -226,14 +248,9 @@ star.classList.add("fa-regular");
                 const newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
 
                 const params = newUrl.split("/");
-
-
-       
-
-    // Load bookmarks on page load
   
                 const previousTitle = decodeSlug(params[params.length - 1]) || "Home";
-                // Handle the display of folders and files as in your existing code
+
                 if (data['folders'].length == 0 && data['files'].length == 0) {
                     if (currentUrl != "/") {
                         $(".container .right .content").html(`${breadcrumbHtml}<div class="nothing"><div class="img"></div><div class="heading">Nothing found</div><button class="previous" onclick="changePageContent('${(newUrl.trim() == '' ? '/' : newUrl)}', '${previousTitle}')">Go back</button></div>`);

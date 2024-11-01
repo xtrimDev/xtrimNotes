@@ -16,7 +16,7 @@ if (cachedPdf) {
     loadAndRenderPDF(new Uint8Array(JSON.parse(cachedPdf)));
 } else {
     // Fetch PDF and cache it
-    fetch(`/embed/${lastValue}`)
+    fetch(`/embed/${lastValue}`, {method: "POST"})
         .then(response => response.arrayBuffer())
         .then(buffer => {
             // Store the PDF data in cache
