@@ -52,6 +52,86 @@ router.get("/*", ensureNotAuthenticated, async (req, res) => {
     }
 });
 
+router.post("/set/bookmark/:uniqueName", async(req, res) => {
+    try {
+        const result = await ensureAuthenticatedForFetching(req, res);
+
+        if (result?.banned || !result?.authenticated) {
+            return res.status(403).json(result);
+        }
+
+        if (req?.user?.role == "owner") {
+            accessLevel = ["owner","admin", "user"];
+        }  else if (req?.user?.role == "admin") {
+            accessLevel = ["admin", "user"];
+        } else {
+            accessLevel = ["user"];
+        } 
+
+        const requestedFile = req.params.uniqueName;
+
+        const fileData = await files.findOne({uniqueName: requestedFile, accessLevel});
+
+        if (fileData) {
+            let data = await bookmarks.findOne({file: fileData._id, addedBy: req.user._id});
+
+            if (!data) {
+                data = new bookmarks({file: fileData._id, addedBy: req.user._id});
+
+                data = await data.save();
+            }
+
+            if (data) {
+                return res.status(200).send({bookmarked: true})
+            } else {
+                return res.status(200).send({bookmarked: false})
+            }
+        } else {
+            return res.status(400).send({bookmarked: false})
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).render("errors/500");
+    }
+});
+
+router.post("/remove/bookmark/:uniqueName", async(req, res) => {
+    try {
+        const result = await ensureAuthenticatedForFetching(req, res);
+
+        if (result?.banned || !result?.authenticated) {
+            return res.status(403).json(result);
+        }
+
+        if (req?.user?.role == "owner") {
+            accessLevel = ["owner","admin", "user"];
+        }  else if (req?.user?.role == "admin") {
+            accessLevel = ["admin", "user"];
+        } else {
+            accessLevel = ["user"];
+        } 
+
+        const requestedFile = req.params.uniqueName;
+
+        const fileData = await files.findOne({uniqueName: requestedFile, accessLevel});
+
+        if (fileData) {
+            data = await bookmarks.deleteOne({file: fileData._id, addedBy: req.user._id});
+
+            if (data) {
+                return res.status(200).send({bookmarked: false})
+            } else {
+                return res.status(200).send({bookmarked: true})
+            }
+        } else {
+            return res.status(400).send({bookmarked: null})
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).render("errors/500");
+    }
+});
+
 router.post("/get/bookmark/:uniqueName", async(req, res) => {
     try {
         const result = await ensureAuthenticatedForFetching(req, res);

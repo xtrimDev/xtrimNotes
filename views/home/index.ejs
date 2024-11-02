@@ -234,21 +234,41 @@
             const isBookmarked = index >= 0;
 
             if (isBookmarked) {
-                data.files.splice(index, 1); // Remove the file from data
-                BookmarkBtnIcon.attr("class", "icon fa-star fa-regular")
+                await fetch(`/remove/bookmark/${uniqueName}`, {method: "POST"}).then((response) => response.json()).then((res) => {
+                    if (!res.bookmarked) {
+                        data.files.splice(index, 1); // Remove the file from data
+                        BookmarkBtnIcon.removeAttr("class");
+                        BookmarkBtnIcon.attr("class", "icon fa-star fa-regular")
 
-                Toast.fire({
-                    icon: "success",
-                    title: "Removed from favorites"
-                });
+                        Toast.fire({
+                            icon: "success",
+                            title: "Removed from favorites"
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: "error",
+                            title: "Something went wrong"
+                        });
+                    }
+                })
             } else {
-                data.files.push({ name: embedTitle, uniqueName: uniqueName }); // Add the new file
-                BookmarkBtnIcon.attr("class", "icon fa-star fa-solid")
+                await fetch(`/set/bookmark/${uniqueName}`, {method: "POST"}).then((response) => response.json()).then((res) => {
+                    if (res.bookmarked) {
+                        data.files.push({ name: embedTitle, uniqueName: uniqueName }); // Add the new file
+                        BookmarkBtnIcon.removeAttr("class");
+                        BookmarkBtnIcon.attr("class", "icon fa-star fa-solid")
 
-                Toast.fire({
-                    icon: "success",
-                    title: "Added to favorites"
-                });
+                        Toast.fire({
+                            icon: "success",
+                            title: "Added to favorites"
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: "error",
+                            title: "Something went wrong"
+                        });
+                    }
+                })
             }
 
             $(".swal2-container").attr("style", "z-index: 100000 !important;");
