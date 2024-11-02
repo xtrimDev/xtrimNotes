@@ -73,6 +73,14 @@ router.post("/addFolder", async (req, res) => {
                 permission: 1
             });
         } else if (atFolder == "/") {
+            if (folderName.toLowerCase() == "bookmarks") {
+                return res.status(400).json({
+                    success: 0,
+                    msg: "Folder with " + folderName + " name is not allowed.",
+                    permission: 1
+                });
+            }
+
             const ListDuplicateFolders = await folders.findOne({ parentFolder: null, name: folderName });
 
             if (ListDuplicateFolders) {
