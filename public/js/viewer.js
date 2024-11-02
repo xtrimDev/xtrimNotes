@@ -12,14 +12,11 @@ loadingMessage.style.display = 'block';
 const cachedPdf = localStorage.getItem(`pdf-${lastValue}`);
 
 if (cachedPdf) {
-    // Load PDF from cache
     loadAndRenderPDF(new Uint8Array(JSON.parse(cachedPdf)));
 } else {
-    // Fetch PDF and cache it
     fetch(`/embed/${lastValue}`, {method: "POST"})
         .then(response => response.arrayBuffer())
         .then(buffer => {
-            // Store the PDF data in cache
             localStorage.setItem(`pdf-${lastValue}`, JSON.stringify(Array.from(new Uint8Array(buffer))));
             loadAndRenderPDF(new Uint8Array(buffer));
         })

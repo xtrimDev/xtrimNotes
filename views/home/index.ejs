@@ -30,6 +30,11 @@
                         <% } %>
                 </div>
                 <div class="divider"></div>
+                <div class="clearfix"></div>
+                <div class="bottom">
+                    <button class="btn btn-bookmark fa-solid fa-star"
+                        onclick="changePageContent('/bookmarks', 'Bookmarks', true)">Bookmarks</button>
+                </div>
         </section>
         <section class="right">
             <div class="header">
@@ -69,15 +74,16 @@
         <div class="titlebar">
             <div class="leftside">
                 <button class="openInTab" id="openInTab" title="open in new tab"><i
-                    class="fas fa-external-link-alt"></i></button>
+                        class="fas fa-external-link-alt"></i></button>
+                <button class="bookmark-btn" id="bookmark-btn" title="Bookmark"><i
+                        class="icon fa-star fa-regular"></i></button>
             </div>
-            
-                    
+
+
             <div class="pageTitle" id="pageTitle">Document Preview</div>
 
             <div class="rightside">
-                <button id="closeViewerButton" title="close"><i
-                    class="fas fa-close"></i></button></button>
+                <button id="closeViewerButton" title="close"><i class="fas fa-close"></i></button></button>
             </div>
 
         </div>
@@ -134,11 +140,22 @@
                 </div>
             </div>`;
 
-        const cache = new Map(); 
+        const cache = new Map();
+        const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
 
         async function fetchContent(url, reset = false) {
             if (!reset && cache.has(url)) {
-                return cache.get(url); 
+                return cache.get(url);
             }
 
             return fetch(url, {
@@ -151,13 +168,13 @@
                         if (response.status == 403) {
                             const errData = response.json();
 
-                            if (errData?.banned){
+                            if (errData?.banned) {
                                 Swal.fire({
                                     title: "Account banned",
                                     text: "Your don't have permission to access the content.",
                                     icon: "error",
-                                }).then(()=>{
-                                    window.location.href='/auth/login';
+                                }).then(() => {
+                                    window.location.href = '/auth/login';
                                 });
                             }
 
@@ -166,8 +183,8 @@
                                     title: "Not authenticated",
                                     text: "Your are not loggedin, login again to access it.",
                                     icon: "error",
-                                }).then(()=>{
-                                    window.location.href='/auth/login';
+                                }).then(() => {
+                                    window.location.href = '/auth/login';
                                 });
 
                                 return;
@@ -181,43 +198,69 @@
                         }
                     }
                     return response.json().then(data => {
-                        cache.set(url, data);  
+                        cache.set(url, data);
                         return data;
                     });
                 })
                 .catch(error => console.error('Error fetching content:', error));
         }
-        function toggleBookmark(uniqueName) {
-            const targetDiv = document.querySelector(".titlebar");
-        const starIcon = document.getElementById(`star-${uniqueName}`);
-        let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-        
-        if (bookmarks.includes(uniqueName)) {
-            bookmarks = bookmarks.filter(item => item !== uniqueName);
-            starIcon.classList.remove('fa-solid');
-            starIcon.classList.add('fa-regular');
 
-        } else {
-            bookmarks.push(uniqueName);
-            starIcon.classList.add('fa-solid');
+        async function toggleBookmark(uniqueName, embedTitle) {
+            const BookmarkBtn = $("#bookmark-btn");
+            const BookmarkBtnIcon = $("#bookmark-btn .icon");
+
+            BookmarkBtnIcon.attr("class", "icon fa-solid fa-spinner fa-spin-pulse");
+            BookmarkBtn.attr("disabled", true);
+
+            let data = cache.has("/bookmarks") ? cache.get("/bookmarks") : null;
+
+            if (!data) {
+                try {
+                    const response = await fetch("/bookmarks", { method: "POST" });
+                    if (!response.ok) throw new Error("Failed to fetch bookmarks");
+                    data = await response.json();
+                    cache.set("/bookmarks", data); // Set the initial cache if not present
+                } catch (error) {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Something went wrong"
+                    });
+                    $(".swal2-container").attr("style", "z-index: 100000 !important;");
+                    return;
+                }
+            }
+
+            const index = data.files.findIndex(file => file.uniqueName === uniqueName);
+            const isBookmarked = index >= 0;
+
+            if (isBookmarked) {
+                data.files.splice(index, 1); // Remove the file from data
+                BookmarkBtnIcon.attr("class", "icon fa-star fa-regular")
+
+                Toast.fire({
+                    icon: "success",
+                    title: "Removed from favorites"
+                });
+            } else {
+                data.files.push({ name: embedTitle, uniqueName: uniqueName }); // Add the new file
+                BookmarkBtnIcon.attr("class", "icon fa-star fa-solid")
+
+                Toast.fire({
+                    icon: "success",
+                    title: "Added to favorites"
+                });
+            }
+
+            $(".swal2-container").attr("style", "z-index: 100000 !important;");
+
+            // Explicitly update the cache after modifying the data
+            cache.set("/bookmarks", data);
+
+            BookmarkBtn.removeAttr("disabled")
+            updateContent(window.location.pathname, document.title);
         }
-        
-        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-    }
-       
-    async function loadBookmarks() {
-        const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-       await bookmarks.forEach(uniqueName => {
-        const starIcon = document.getElementById(`star-${uniqueName}`);
-        const star = document.querySelector(`.fa-star`);
-if (starIcon) { 
-    starIcon.classList.add('fa-solid');
-}else{
-star.classList.add("fa-regular");
-}
 
-        });
-    }
+
         async function updateContent(url, title = '', reset = false) {
             $(".container .right .content").html(loader);
 
@@ -232,23 +275,21 @@ star.classList.add("fa-regular");
                 <div class="text">${item.name}</div>
             </a>
         `).join('');
- 
 
-        const files = data['files'].map(item => `
-        <div class="file-container">
-    <a class="content" data-embed="${item.uniqueName}" data-name="${item.name}">
-        <div class="icon fa fa-file-pdf"></div>
-        <div class="text">${item.name}</div>
-    </a>
-     
-    </div>
-`).join('');
+                const files = data['files'].map(item => `
+            <div class="file-container">
+                <a class="content" data-embed="${item.uniqueName}" data-name="${item.name}">
+                    <div class="icon fa fa-file-pdf"></div>
+                    <div class="text">${item.name}</div>
+                </a>
+            </div>
+        `).join('');
 
                 const currentUrl = window.location.pathname;
                 const newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
 
                 const params = newUrl.split("/");
-  
+
                 const previousTitle = decodeSlug(params[params.length - 1]) || "Home";
 
                 if (data['folders'].length == 0 && data['files'].length == 0) {
@@ -263,9 +304,9 @@ star.classList.add("fa-regular");
 
                 if (title) document.title = title;
             });
-      
+
         }
-       
+
         function updateBreadcrumbs(path) {
             path = decodeSlug(path);
             const parts = path.split('/').filter(Boolean);
@@ -292,7 +333,6 @@ star.classList.add("fa-regular");
         }
 
         function changePageContent(newUrl, newTitle, hide = false) {
-
             if (hide) {
                 const left = document.getElementsByClassName("left");
                 left[0].classList.remove("collapse");
@@ -301,14 +341,14 @@ star.classList.add("fa-regular");
             history.pushState({ title: newTitle }, newTitle, newUrl);
             document.title = newTitle;
             updateContent(newUrl, newTitle);
-            
+
         }
 
         window.addEventListener('popstate', (event) => {
             const state = event.state;
             const title = state?.title || document.title;
             updateContent(location.pathname, title);
-            
+
         });
 
         $(document).ready(() => {
@@ -316,9 +356,9 @@ star.classList.add("fa-regular");
             const initialTitle = document.title;
             history.replaceState({ title: initialTitle }, initialTitle, initialPath);
             updateContent(initialPath);
-        
+
         });
-       
+
 
     </script>
     <%- include("partials/footer") -%>

@@ -1,16 +1,13 @@
 $(document).ready(function () {
     let pdf = null, scale = 1.5, totalPages = 0;
 
-    document.addEventListener("click", function (event) {
+    document.addEventListener("click", async function (event) {
         let targetElement = event.target.closest('[data-embed]');
-      
-        if (targetElement) {
-            const targetDiv = document.querySelector(".titlebar .leftside");
 
-            $(".bookmark-btn").remove();
-           
+        if (targetElement) {
             const embedValue = targetElement.getAttribute('data-embed');
-            const innerDiv = document.getElementsByClassName(`bookmark-btn`)[0];
+            const BookmarkBtn = $("#bookmark-btn");
+            const BookmarkBtnIcon = $("#bookmark-btn .icon");
             const embedTitle = targetElement.getAttribute('data-name') || 'Document Preview';
             const url = `/embed/${embedValue}`;
             const cachedPdf = localStorage.getItem(`pdf-${embedValue}`);
@@ -18,29 +15,6 @@ $(document).ready(function () {
             const pdfViewer = $('#pdfViewer');
             const pageTitle = $('#pageTitle');
             const openInTab = $('#openInTab');
-            
-        if (innerDiv==null) { 
-            // Create button
-            const button = document.createElement("button");
-            button.className = "bookmark-btn";
-            button.title = "Bookmark"
-            button.onclick = () => toggleBookmark(embedValue); // Set the onclick function
-            
-            // Create icon element
-            const icon = document.createElement("i");
-            icon.className = "icon fa-star fa-regular";
-            icon.id = `star-${embedValue}`;
-            
-            // Append icon to button, then button to targetDiv
-            button.appendChild(icon);
-            if (targetDiv.children.length >= 1) {
-                targetDiv.insertBefore(button, targetDiv.children[1]);
-            } else {
-                targetDiv.appendChild(button); // Fallback if there's no second element
-            }
-        }
-        loadBookmarks();
-       
 
             pdfViewer.empty().append('<div id="loaderPdf" style="font-size: 1.5rem; color: white; position: relative; top: 50%;">Loading PDF...</div>');
             pageTitle.text(embedTitle);
@@ -49,13 +23,67 @@ $(document).ready(function () {
             viewerContainer.show();
             openInTab.attr("onclick", `window.open('/viewer/${embedValue}', '_blank')`);
 
+            BookmarkBtnIcon.attr("class", "icon fa-solid fa-spinner fa-spin-pulse");
+            BookmarkBtn.attr("disabled", true);
+            BookmarkBtn.attr("onclick", `toggleBookmark('${embedValue}', '${embedTitle}')`);
+
+            let data = cache.has("/bookmarks") ? cache.get("/bookmarks") : null;
+
+            if (!data) {
+                try {
+                    const response = await fetch("/bookmarks", { method: "POST" });
+                    if (!response.ok) throw new Error("Failed to fetch bookmarks");
+                    data = await response.json();
+                    cache.set("/bookmarks", data); // Set the initial cache if not present
+                } catch (error) {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Something went wrong"
+                    });
+                    $(".swal2-container").attr("style", "z-index: 100000 !important;");
+                    return;
+                }
+            }
+
+            const index = data.files.findIndex(file => file.uniqueName === embedValue);
+            const isBookmarked = index >= 0;
+
+            if (isBookmarked) {
+                BookmarkBtnIcon.attr("class", "icon fa-star fa-solid")
+                BookmarkBtn.removeAttr("disabled")
+            } else {
+                let checked = false;
+                
+                fetch(`/get/bookmark/${embedValue}`, { method: "POST" })
+                    .then((response) => response.json())  // Call json() as a function
+                    .then((data) => {
+                        (data.bookmarked)
+                            ? checked = true
+                            : checked = false
+                    }).catch(() => {
+                        Toast.fire({
+                            icon: "error",
+                            title: "Something Went wrong"
+                        });
+                    })
+
+                if (checked) {
+                    data.files.push({ name: embedTitle, uniqueName: embedValue }); // Add the new file
+                    BookmarkBtnIcon.attr("class", "icon fa-star fa-solid")
+                } else {
+                    BookmarkBtnIcon.attr("class", "icon fa-star fa-regular")
+                }
+
+                BookmarkBtn.removeAttr("disabled")
+            }
+
             if (cachedPdf) {
                 // Load PDF from localStorage
                 const pdfData = new Uint8Array(JSON.parse(cachedPdf));
                 loadAndRenderPDF(pdfData);
             } else {
                 // Fetch PDF from server once
-                fetch(url, {method: "POST"})
+                fetch(url, { method: "POST" })
                     .then(response => response.arrayBuffer())
                     .then(buffer => {
                         // Cache the data in localStorage
@@ -70,7 +98,7 @@ $(document).ready(function () {
     });
 
     function loadAndRenderPDF(pdfData) {
-        pdfjsLib.getDocument({data: pdfData}).promise.then(pdfDoc => {
+        pdfjsLib.getDocument({ data: pdfData }).promise.then(pdfDoc => {
             pdf = pdfDoc;
             totalPages = pdf.numPages;
             $('#totalPages').text(totalPages);
