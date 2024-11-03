@@ -105,7 +105,7 @@ $(document).ready(function () {
                     type: 'POST',
                     url: '/dict/addFile',
                     data: formData,
-                    processData: false,   
+                    processData: false,
                     contentType: false,
                     success: (response) => {
                         if (response?.success && response?.permission) {
@@ -288,5 +288,12 @@ $(document).ready(function () {
                 })
             }
         });
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "PrintScreen" || (event.ctrlKey && event.key === "p")) {
+            // alert("Screenshots are not allowed on this website.");
+            event.preventDefault();
+        }
     });
 })

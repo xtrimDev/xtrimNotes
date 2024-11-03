@@ -1,43 +1,44 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const contextMenu = document.getElementById('custom-context-menu-file');
-    const open = document.getElementById('file-open');
-    const rename = document.getElementById('file-rename');
+    /** folder */
+    const contextmenuFolder = document.getElementById("custom-context-menu-folder");
+    const openFolder = document.getElementById('folder-open');
+    const renameFolder = document.getElementById('folder-rename');
+    const infoFolder = document.getElementById('folder-info');
+
+    /** file */
+    const contextMenufile = document.getElementById('custom-context-menu-file');
+    const openfile = document.getElementById('file-open');
+    const renameFile = document.getElementById('file-rename');
     const download = document.getElementById('file-download');
     const remove = document.getElementById('file-delete');
-    const info = document.getElementById('file-info');
+    const infoFile = document.getElementById('file-info');
 
     document.querySelector('.right').addEventListener('contextmenu', function (event) {
         if (document.location.pathname == "/bookmarks") return;
-        if (event.target.closest('.file-menu')) {
+        
+        /** folder */
+        if (event.target.closest('.folder-menu')) {
             event.preventDefault();
-            const link = event.target.closest('.file-menu');
+            const link = event.target.closest('.folder-menu');
 
-            // Store the clicked element's data attributes
-            open.dataset.embed = link.dataset.embed;
-            open.dataset.name = link.dataset.name;
-            rename.dataset.name = link.dataset.name;
-            rename.dataset.uniqueId = link.dataset.embed;
+            openFolder.setAttribute("onclick", link.getAttribute("onclick"));
 
-            if (download) {
-                download.dataset.name = link.dataset.name;
-                download.dataset.uniqueId = link.dataset.embed;
-            }
+            renameFolder.dataset.path = link.dataset.path;
+            renameFolder.dataset.name = link.dataset.name;
 
-            remove.dataset.name = link.dataset.name;
-
-            if (info) {
-                info.dataset.name = link.dataset.name;
-                info.dataset.uniqueName = link.dataset.embed;
+            if (infoFolder) {
+                infoFolder.dataset.path = link.dataset.path;
             }
 
             // Initial positioning
             let posX = event.pageX;
             let posY = event.pageY;
 
+            contextMenufile.style.display = "none";
             // Calculate menu dimensions
-            contextMenu.style.display = 'block'; // Temporarily display to get dimensions
-            const menuWidth = contextMenu.offsetWidth;
-            const menuHeight = contextMenu.offsetHeight;
+            contextmenuFolder.style.display = 'block'; // Temporarily display to get dimensions
+            const menuWidth = contextmenuFolder.offsetWidth;
+            const menuHeight = contextmenuFolder.offsetHeight;
 
             // Check if the menu would overflow the right side
             if (posX + menuWidth > window.innerWidth) {
@@ -50,20 +51,69 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Apply the adjusted position
-            contextMenu.style.top = `${posY}px`;
-            contextMenu.style.left = `${posX}px`;
+            contextmenuFolder.style.top = `${posY}px`;
+            contextmenuFolder.style.left = `${posX}px`;
+        }
+
+        /** file */
+        if (event.target.closest('.file-menu')) {
+            event.preventDefault();
+            const link = event.target.closest('.file-menu');
+
+            // Store the clicked element's data attributes
+            openfile.dataset.embed = link.dataset.embed;
+            openfile.dataset.name = link.dataset.name;
+            renameFile.dataset.name = link.dataset.name;
+            renameFile.dataset.uniqueId = link.dataset.embed;
+
+            if (download) {
+                download.dataset.name = link.dataset.name;
+                download.dataset.uniqueId = link.dataset.embed;
+            }
+
+            remove.dataset.name = link.dataset.name;
+
+            if (infoFile) {
+                infoFile.dataset.name = link.dataset.name;
+                infoFile.dataset.uniqueName = link.dataset.embed;
+            }
+
+            // Initial positioning
+            let posX = event.pageX;
+            let posY = event.pageY;
+
+            contextmenuFolder.style.display = "none";
+            // Calculate menu dimensions
+            contextMenufile.style.display = 'block'; // Temporarily display to get dimensions
+            const menuWidth = contextMenufile.offsetWidth;
+            const menuHeight = contextMenufile.offsetHeight;
+
+            // Check if the menu would overflow the right side
+            if (posX + menuWidth > window.innerWidth) {
+                posX = window.innerWidth - menuWidth - 10; // Adjust position
+            }
+
+            // Check if the menu would overflow the bottom side
+            if (posY + menuHeight > window.innerHeight) {
+                posY = window.innerHeight - menuHeight - 10; // Adjust position
+            }
+
+            // Apply the adjusted position
+            contextMenufile.style.top = `${posY}px`;
+            contextMenufile.style.left = `${posX}px`;
         }
     });
 
-    rename.addEventListener("click", async () => {
+    renameFile.addEventListener("click", async () => {
         const { value: fileName } = await Swal.fire({
             input: "text",
             title: "Enter New name",
             inputPlaceholder: "Enter file name",
-            inputValue: rename.dataset.name,
+            inputValue: renameFile.dataset.name,
             customClass: {
                 input: 'file-new-name'   // Custom class for the input field
             },
+            reverseButtons: true,
             inputAttributes: {
                 minlength: "1",
                 autocapitalize: "off",
@@ -73,14 +123,90 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             showCancelButton: true,
             inputValidator: (value) => {
-                if (value.toLowerCase() == rename.dataset.name.toLowerCase()) {
+                if (value.toLowerCase() == renameFile.dataset.name.toLowerCase()) {
                     return "The old name and new name are same.";
+                } else if (value == "") {
+                    return "Please Enter the file name";
                 }
             }
         });
         if (fileName) {
             try {
-                const response = await fetch(`/action/rename/file/${rename.dataset.uniqueId}/${fileName}`, {
+                const response = await fetch(`/action/rename/file/${renameFile.dataset.uniqueId}/${fileName}`, {
+                    method: "POST",
+                });
+
+                // Check if the response is OK (status in the range 200-299)
+                if (!response.ok) {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Something went wrong"
+                    });
+                    $(".swal2-container").attr("style", "z-index: 100000 !important;");
+                    return
+                }
+
+                const res = await response.json(); // Parse the JSON response
+
+                if (res?.success) {
+                    Toast.fire({
+                        icon: "success",
+                        title: "Name changed successfully"
+                    });
+                    $(".swal2-container").attr("style", "z-index: 100000 !important;");
+
+                    updateContent(window.location.pathname, document.title, true);
+                    return
+                } else {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Something went wrong"
+                    });
+                    $(".swal2-container").attr("style", "z-index: 100000 !important;");
+                    return
+                }
+            } catch (error) {
+                Toast.fire({
+                    icon: "error",
+                    title: "Something went wrong"
+                });
+                $(".swal2-container").attr("style", "z-index: 100000 !important;");
+                return
+            }
+        }
+    });
+
+
+    renameFolder.addEventListener("click", async () => {
+        const { value: folderName } = await Swal.fire({
+            input: "text",
+            title: "Enter New name",
+            inputPlaceholder: "Enter folder name",
+            inputValue: renameFolder.dataset.name,
+            customClass: {
+                input: 'file-new-name'   // Custom class for the input field
+            },
+            reverseButtons: true,
+            inputAttributes: {
+                minlength: "1",
+                autocapitalize: "off",
+                autocorrect: "off",
+                autocomplete: "off",
+                required: "required"
+            },
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (value.toLowerCase() == renameFolder.dataset.name.toLowerCase()) {
+                    return "The old name and new name are same.";
+                }else if (value == "") {
+                    return "Please Enter the folder name";
+                }
+            }
+        });
+        if (folderName) {
+            try {
+                let url = `/action/rename/folder?path=${encodeURIComponent(renameFolder.dataset.path)}&newName=${encodeURIComponent(folderName)}`;
+                const response = await fetch(`${url}`, {
                     method: "POST",
                 });
 
@@ -214,14 +340,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Hide the context menu when clicking outside
     document.addEventListener('click', (event) => {
-        if (!event.target.closest('#custom-context-menu')) {
-            contextMenu.style.display = 'none';
+        if (!event.target.closest('#custom-context-menu-file')) {
+            contextMenufile.style.display = 'none';
+        }
+        if (!event.target.closest('#custom-context-menu-folder')) {
+            contextmenuFolder.style.display = 'none';
         }
     });
 
 
     // Function to create and display the enhanced popup
-    info?.addEventListener("click", infoev);
+    infoFile?.addEventListener("click", infoev);
 
     async function infoev() {
         try {
@@ -247,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let updatedAt = new Date(res.data.updatedAt);
 
                 // Format to date and time
-                updatedAt = updatedAt.toLocaleString('en-US', {
+                updatedAt = updatedAt.toLocaleString('en-GB', {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit',
@@ -257,10 +386,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     hour12: true // Use 24-hour format
                 });
 
-                let createdAt = new Date(res.data.updatedAt);
+                let createdAt = new Date(res.data.createdAt);
 
                 // Format to date and time
-                createdAt = createdAt.toLocaleString('en-US', {
+                createdAt = createdAt.toLocaleString('en-GB', {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit',
@@ -313,6 +442,97 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     }
+
+    infoFolder?.addEventListener("click", async() => {
+        try {
+            const response = await fetch(`/action/getFolderData?path=${encodeURIComponent(infoFolder?.dataset?.path)}`, {
+                method: "POST",
+            });
+
+            if (!response.ok) {
+                Toast.fire({
+                    icon: "error",
+                    title: "Error Loading info"
+                });
+                $(".swal2-container").attr("style", "z-index: 100000 !important;");
+                return;
+            }
+
+            const res = await response.json(); // Parse the JSON response
+
+            if (res?.success) {
+                const popupOverlay = document.createElement('div');
+                popupOverlay.className = 'popup-overlay';
+
+                let updatedAt = new Date(res.data.updatedAt);
+
+                // Format to date and time
+                updatedAt = updatedAt.toLocaleString('en-GB', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true // Use 24-hour format
+                });
+
+                let createdAt = new Date(res.data.createdAt);
+
+                // Format to date and time
+                createdAt = createdAt.toLocaleString('en-GB', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true // Use 24-hour format
+                });
+
+                // Create popup content with icons and styled information
+                const popup = document.createElement('div');
+                popup.className = 'popup';
+                popup.innerHTML = `
+        <div class="popup-header">
+            <h2><i class="fa fa-info-circle"></i> File Information</h2>
+        </div>
+        <div class="popup-content">
+            <p><i class="fa-solid fa-i-cursor"></i> <strong>File Name:</strong> ${res.data.name}</p>
+            <p><i class="fa-solid fa-bezier-curve"></i> <strong>Path:</strong> ${res.data.path}</p>
+            <p><i class="fa-solid fa-user-lock"></i> <strong>Access Level:</strong> ${res.data.accessLevel}</p>
+            <p><i class="fa-solid fa-user-secret"></i> <strong>Added By:</strong> ${res.data.createdBy}</p>
+            <p><i class="fa-regular fa-calendar"></i> <strong>Added at:</strong> ${createdAt}</p>
+            <p><i class="fa-solid fa-clock-rotate-left"></i> <strong>Updated at:</strong> ${updatedAt}</p>
+        </div>
+        <div class="popup-footer">
+            <button onclick="closePopup()"><i class="fa fa-times"></i> Close</button>
+        </div>
+    `;
+                // Append popup elements to the body
+                popupOverlay.appendChild(popup);
+                document.body.appendChild(popupOverlay);
+                return
+            } else {
+                Toast.fire({
+                    icon: "error",
+                    title: "Error loading info"
+                });
+                $(".swal2-container").attr("style", "z-index: 100000 !important;");
+                return
+            }
+        } catch (err) {
+            console.log(err)
+            Toast.fire({
+                icon: "error",
+                title: "Error Loading info"
+            });
+            $(".swal2-container").attr("style", "z-index: 100000 !important;");
+            return;
+        }
+
+
+    });
 });
 
 function closePopup() {

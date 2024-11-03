@@ -10,6 +10,7 @@ const myCache = require("../middleware/cache");
 const path = require("path");
 const fs = require("fs");
 const users = require("../models/users");
+const folders = require("../models/folders");
 
 
 require("dotenv").config();
@@ -39,6 +40,34 @@ router.post("/rename/file/:uniqueName/:newName", async(req, res) => {
         const newName = req.params.newName;
 
         await files.updateOne({uniqueName: uniqueName, accessLevel: { $in: accessLevel }}, {$set: {name:  newName}});
+
+        return res.status(200).send({success: true})
+    } catch (error) {
+        console.log(error)
+        return res.status(500).render("errors/500");
+    }
+});
+
+router.post("/rename/folder", async(req, res) => {
+    try {
+        const result = await ensureAuthenticatedForFetching(req, res);
+
+        if (result?.banned || !result?.authenticated) {
+            return res.status(403).json(result);
+        }
+
+        if (req?.user?.role == "owner") {
+            accessLevel = ["owner","admin", "user"];
+        }  else if (req?.user?.role == "admin") {
+            accessLevel = ["admin", "user"];
+        } else {
+            accessLevel = ["user"];
+        } 
+
+        const path = req.query.path;
+        const newName = req.query.newName;
+
+        await folders.updateOne({path, accessLevel: { $in: accessLevel }}, {$set: {name:  newName}});
 
         return res.status(200).send({success: true})
     } catch (error) {
@@ -179,6 +208,51 @@ router.post("/getFileData/:uniqueName", async(req, res) => {
             return res.status(200).send({ success: true, data: responseData });
         } else {
             return res.status(404).send({ success: false, msg: "File not found" });
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).render("errors/500");
+    }
+});
+
+router.post("/getFolderData", async(req, res) => {
+    try {
+        const result = await ensureAuthenticatedForFetching(req, res);
+
+        if (result?.banned || !result?.authenticated) {
+            return res.status(403).json(result);
+        }
+
+        if (req?.user?.role == "owner") {
+            accessLevel = ["owner","admin", "user"];
+        }  else if (req?.user?.role == "admin") {
+            accessLevel = ["admin", "user"];
+        } else {
+            accessLevel = ["user"];
+        } 
+
+        if (req?.user?.role != "owner") {
+            return res.status(401).send({success: false})
+        }
+
+        const path = req.query.path;
+
+        let data = await Folder.findOne({
+            path,
+            accessLevel: { $in: accessLevel }
+        });
+        
+        if (data) {
+            const addedBy = await users.findById(data.createdBy);
+        
+            const responseData = {
+                ...data.toObject(), 
+                createdBy: addedBy ? `${addedBy.name} (${addedBy.role})` : "Unknown"
+            };
+        
+            return res.status(200).send({ success: true, data: responseData });
+        } else {
+            return res.status(404).send({ success: false, msg: "Folder not found" });
         }
     } catch (error) {
         console.log(error)

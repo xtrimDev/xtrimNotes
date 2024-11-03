@@ -100,6 +100,15 @@
         </div>
     </div>
     <% if (userType == "admin" || userType == "owner") { %>
+        <div id="custom-context-menu-folder" class="context-menu" style="display: none;">
+            <ul>
+                <li id="folder-open"><i class="fa fa-folder-open"></i> Open</li>
+                <li id="folder-rename"><i class="fa-solid fa-i-cursor"></i> Rename</li>
+                <% if (userType == "owner") { %>
+                    <li id="folder-info"><i class="fa fa-info-circle"></i> Get Info</li>
+                <% } %>
+            </ul>
+        </div>
         <div id="custom-context-menu-file" class="context-menu" style="display: none;">
             <ul>
                 <li id="file-open"><i class="fa fa-file-pdf"></i> Open</li>
@@ -303,15 +312,29 @@
 
             let breadcrumbHtml = updateBreadcrumbs(url);
 
+            const currentUrl = window.location.pathname;
+                const newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+
             fetchContent(url, reset).then(data => {
                 if (!data) return;
 
-                const folders = data['folders'].map(item => `
-            <a class="content" onclick="changePageContent('${item.path}', '${item.name}')">
-                <div class="icon fa fa-folder-open"></div>
+                let folders;
+                if (currentUrl == "/")  {
+                    folders = data['folders'].map(item => `
+            <a class="content folder-menu" onclick="changePageContent('${item.path}', '${item.name}')" data-path="${item.path}" data-name="${item.name}">
+                <div class="icon fa-solid fa-graduation-cap"></div>
                 <div class="text">${item.name}</div>
             </a>
         `).join('');
+                } else {
+                    folders = data['folders'].map(item => `
+            <a class="content folder-menu" onclick="changePageContent('${item.path}', '${item.name}')" data-path="${item.path}" data-name="${item.name}">
+                <div class="icon fa fa-folder"></div>
+                <div class="text">${item.name}</div>
+            </a>
+        `).join('');
+                }
+                
 
                 const files = data['files'].map(item => `
             <a class="content file-menu" data-embed="${item.uniqueName}" data-name="${item.name}">
@@ -319,9 +342,6 @@
                 <div class="text">${item.name}</div>
             </a>
         `).join('');
-
-                const currentUrl = window.location.pathname;
-                const newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
 
                 const params = newUrl.split("/");
 
