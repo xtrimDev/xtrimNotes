@@ -34,6 +34,7 @@ app.set("view engine", "ejs");
 app.set("views", viewsPath);
 
 const home_route = require("./routes/home");
+const action_route = require("./routes/action");
 const auth_route = require("./routes/auth");
 const embed_route = require("./routes/embed");
 const viewer_route = require("./routes/viewer");
@@ -41,6 +42,7 @@ const dict_route = require("./routes/dict");
 const error_route = require("./routes/error");
 
 app.use("/embed", embed_route);
+app.use("/action", action_route);
 app.use("/viewer", viewer_route);
 app.use("/dict", dict_route);
 app.use("/auth", auth_route);

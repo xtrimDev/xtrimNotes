@@ -7,13 +7,15 @@
 /* Hide scrollbar for Chrome, Safari and Opera */
 *::-webkit-scrollbar {
     display: none;
-  }
-  
-  /* Hide scrollbar for IE, Edge and Firefox */
-  * {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
 
 .dark {
     --main-bg: #25252C;
@@ -85,23 +87,25 @@ body {
     flex-direction: row;
     overflow: hidden
 }
+
 .overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* 50% dimming */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* 50% dimming */
     z-index: 0;
     min-height: 100vh;
     width: 100%;
-  }
+}
 
 .container .left {
     text-wrap: nowrap;
     background-color: #0000002e;
     /* background-size: cover; */
-     background-position:center;
+    background-position: center;
     height: 100%;
     position: fixed;
     overflow: auto;
@@ -126,7 +130,7 @@ body {
     text-align: center;
 }
 
-.left .bottom .btn{
+.left .bottom .btn {
     border: none;
     font-family: inherit;
     font-size: inherit;
@@ -170,11 +174,11 @@ body {
     width: 0
 }
 
-.left > .top .close{
+.left>.top .close {
     display: none;
 }
 
-.left.collapse > .top {
+.left.collapse>.top {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -202,7 +206,7 @@ body {
     /* margin-top: 1.4rem */
 }
 
-.left > .top {
+.left>.top {
     margin-left: 2rem;
     margin-right: 2rem;
     margin-top: 1rem;
@@ -319,7 +323,7 @@ body {
     margin-right: 1px;
 }
 
- .bookmark-btn .fa-star {
+.bookmark-btn .fa-star {
     color: #ccc;
 }
 
@@ -333,7 +337,7 @@ body {
     background-image: var(--folder-left-icon) !important
 }
 
-.content ul li.main-menu .course:hover{
+.content ul li.main-menu .course:hover {
     transition: background-color 0.3s ease-in-out;
     border-radius: 15px;
     background-color: #353c45
@@ -407,43 +411,44 @@ li ul.submenu>li {
     flex-direction: column;
     align-items: center;
 }
+
 @keyframes bouncing-loader {
     to {
-      opacity: 0.1;
-      transform: translate3d(0, -30px, 0);
+        opacity: 0.1;
+        transform: translate3d(0, -30px, 0);
     }
-  }
-  
-  .bouncing-loader {
+}
+
+.bouncing-loader {
     display: flex;
     justify-content: center;
-  }
-  
-  .bouncing-loader > div {
+}
+
+.bouncing-loader>div {
     width: 25px;
     height: 25px;
     margin: 3rem 0.2rem;
     background: #ffffff;
     border-radius: 50%;
     animation: bouncing-loader 0.3s infinite alternate;
-  }
-  
-  .bouncing-loader > div:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-  
-  .bouncing-loader > div:nth-child(3) {
-    animation-delay: 0.4s;
-  }
+}
 
-.wrapper span{
+.bouncing-loader>div:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.bouncing-loader>div:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.wrapper span {
     position: absolute;
-    top:75px;
+    top: 75px;
     font-family: 'Lato';
     font-size: 20px;
     letter-spacing: 12px;
     color: #fff;
-    left:15%;
+    left: 15%;
 }
 
 .dropdown-content a {
@@ -531,7 +536,8 @@ li ul.submenu>li {
 .telegram-button a {
     text-decoration: none;
     color: white;
-    background-color: #0088cc; /* Telegram's brand color */
+    background-color: #0088cc;
+    /* Telegram's brand color */
     padding: 6px 10px 6px 6px;
     border-radius: 25px;
     font-size: 18px;
@@ -600,6 +606,7 @@ li ul.submenu>li {
     align-items: center;
     gap: 1rem;
 }
+
 /* 
 .right-section .actions .btn {
     background-size: 2rem;
@@ -619,25 +626,30 @@ li ul.submenu>li {
 } */
 
 .btn {
-    background-color: #0088cc; /* Button background color */
-        border: none;
-        color: white;
-        padding: 7px 11px;
-        font-size: 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 0.3s ease;
+    background-color: #0088cc;
+    /* Button background color */
+    border: none;
+    color: white;
+    padding: 7px 11px;
+    font-size: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
 }
+
 .btn:hover {
-    background-color: #0056b3; /* Button background color on hover */
+    background-color: #0056b3;
+    /* Button background color on hover */
 }
 
 .btn i {
-    margin: 0; /* Remove any margin around the icon */
+    margin: 0;
+    /* Remove any margin around the icon */
 }
+
 /* 
 .btn.folder {
     background: url('/images/app/add-folder.png');
@@ -789,7 +801,7 @@ input:checked+.slider:before {
 }
 
 .breadcrumb ul li:hover {
-    color: #ffffffc2  !important;
+    color: #ffffffc2 !important;
     font-weight: 500 !important;
     /* transition: 0.3s ease-in-out; */
 }
@@ -947,9 +959,12 @@ button.previous:active {
 }
 
 .management .content:hover {
-    background-color: #1f2228; /* Change background color slightly */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Add deeper shadow on hover */
-    transform: scale(1.05); /* Slight zoom effect */
+    background-color: #1f2228;
+    /* Change background color slightly */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    /* Add deeper shadow on hover */
+    transform: scale(1.05);
+    /* Slight zoom effect */
 }
 
 
@@ -1004,7 +1019,7 @@ button.previous:active {
     text-wrap: nowrap;
     color: var(--main-color);
     z-index: 2;
-  width: 100%;
+    width: 100%;
 }
 
 .footer .footer-item {
@@ -1016,7 +1031,8 @@ button.previous:active {
     width: 100%;
     border-radius: 15px;
     background-color: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px); /* Apply the blur effect */
+    backdrop-filter: blur(5px);
+    /* Apply the blur effect */
     padding-right: 15px
 }
 
@@ -1085,23 +1101,27 @@ button.previous:active {
     }
 
     .telegram-button a span {
-        display: none;  /* Hide the text on smaller screens */
+        display: none;
+        /* Hide the text on smaller screens */
     }
 
     .telegram-button a {
         /* width: 3rem; */
-        padding: 6px 6px 6px 6px;  /* Adjust padding to center the icon */
+        padding: 6px 6px 6px 6px;
+        /* Adjust padding to center the icon */
     }
 }
 
 @media screen and (max-width: 787px) {
-    .left.collapse + .right .telegram-button a span {
-        display: none;  /* Hide the text on smaller screens */
+    .left.collapse+.right .telegram-button a span {
+        display: none;
+        /* Hide the text on smaller screens */
     }
 
-    .left.collapse + .right .telegram-button a {
+    .left.collapse+.right .telegram-button a {
         /* width: 3rem; */
-        padding: 6px 6px 6px 6px;  /* Adjust padding to center the icon */
+        padding: 6px 6px 6px 6px;
+        /* Adjust padding to center the icon */
     }
 }
 
@@ -1115,28 +1135,28 @@ button.previous:active {
         margin-top: 0;
     }
 
-    .left.collapse > .top {
+    .left.collapse>.top {
         margin-left: 2rem;
         margin-right: 2rem;
         margin-top: 1rem;
     }
 
-    .left.collapse > .top .close{
+    .left.collapse>.top .close {
         display: block;
         font-size: 2rem;
         color: white;
         cursor: pointer;
     }
 
-    .left.collapse > .top .close:active {
+    .left.collapse>.top .close:active {
         scale: 0.8;
     }
 
-    .left.collapse + .right {
+    .left.collapse+.right {
         margin-left: 100% !important;
     }
 
-    .left.collapse + .right .sm-btn-hide {
+    .left.collapse+.right .sm-btn-hide {
         display: none;
     }
 
@@ -1146,7 +1166,7 @@ button.previous:active {
 }
 
 @media screen and (max-width: 527px) {
-    .left.collapse + .right .xsm-btn-hide {
+    .left.collapse+.right .xsm-btn-hide {
         display: none;
     }
 }
@@ -1240,12 +1260,12 @@ div:where(.swal2-container) {
     height: 100%;
 }
 
-.viewerContainer .pdfViewer > canvas {
+.viewerContainer .pdfViewer>canvas {
     display: block;
     max-width: 100%;
 }
 
-.viewerContainer .pdfViewer > canvas:not(:last-child) {
+.viewerContainer .pdfViewer>canvas:not(:last-child) {
     margin-bottom: 1rem;
 }
 
@@ -1300,7 +1320,7 @@ div:where(.swal2-container) {
 }
 
 .viewerContainer .titlebar .leftbtn {
-    align-items:flex-start;
+    align-items: flex-start;
 }
 
 /* Toolbar styles */
@@ -1328,9 +1348,6 @@ div:where(.swal2-container) {
     border-radius: 5px;
 }
 
-/* .viewerContainer button:hover {
-    background: rgba(0, 0, 0, 0.8);
-} */
 
 .viewerContainer .pageInfo {
     font-size: 16px;
@@ -1357,10 +1374,13 @@ div:where(.swal2-container) {
 }
 
 .viewerContainer .pageTitle {
-    white-space: nowrap;       /* Prevents the text from wrapping to a new line */
-    overflow: hidden;          /* Hides any overflowing text */
-    text-overflow: ellipsis;   /* Adds an ellipsis (...) at the end */
-    width: 200px;    
+    white-space: nowrap;
+    /* Prevents the text from wrapping to a new line */
+    overflow: hidden;
+    /* Hides any overflowing text */
+    text-overflow: ellipsis;
+    /* Adds an ellipsis (...) at the end */
+    width: 200px;
 }
 
 /** =======Animations======= **/
@@ -1380,5 +1400,181 @@ div:where(.swal2-container) {
         width: 74px;
         height: 74px;
         opacity: 0;
+    }
+}
+
+/* Context Menu Container */
+.context-menu {
+    position: absolute;
+    background-color: #2d2f36;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    padding: 5px 0;
+    min-width: 160px;
+    z-index: 1000;
+    overflow: hidden;
+    transform-origin: top left;
+    animation: menu-fade-in 0.2s ease-out;
+}
+
+/* List Style */
+.context-menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* List Item Style */
+.context-menu ul li {
+    padding: 10px 15px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+/* Icon Style */
+.context-menu ul li i {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+/* Hover Effect */
+.context-menu ul li:hover {
+    background-color: #3f424d;
+    color: #d1d1d1;
+}
+
+/* Menu Animation */
+@keyframes menu-fade-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+input.file-new-name {
+    width: 90%;
+    /* border: 2px solid black; */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+input.file-new-name::placeholder {
+    color: gray;
+}
+
+/* Popup Overlay */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Darker overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+/* Popup Window */
+.popup {
+    background-color: #2d2f36; /* Match context menu color */
+    color: #ffffff;
+    padding: 20px;
+    width: 450px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    text-align: left;
+    overflow: hidden;
+    max-width: 90%;
+    font-family: Arial, sans-serif;
+}
+
+.popup .popup-content{
+    overflow: auto;
+}
+
+/* Popup Header */
+.popup-header h2 {
+    margin: 0;
+    font-size: 18px;
+    display: flex;
+    text-wrap: nowrap;
+    align-items: center;
+}
+
+.popup-header h2 i {
+    margin-right: 8px;
+    color: #4CAF50; /* Icon color */
+}
+
+/* Popup Content */
+.popup-content p {
+    margin: 10px 0;
+    font-size: 14px;
+    display: flex;
+    text-wrap: nowrap;
+    align-items: center;
+}
+
+.popup-content p strong {
+    text-wrap: nowrap;
+}
+
+.popup-content p i {
+    margin-right: 10px;
+    color: #3498db; /* Icon color for details */
+    font-size: 16px;
+}
+
+/* Popup Footer */
+.popup-footer {
+    text-align: right;
+    margin-top: 15px;
+}
+
+.popup-footer button {
+    padding: 8px 16px;
+    background-color: #e74c3c;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    float: right;
+}
+
+.popup-footer button i {
+    margin-right: 5px;
+}
+
+.popup-footer button:hover {
+    background-color: #c0392b;
+}
+
+/* Animation for popup */
+.popup {
+    animation: popup-fade-in 0.3s ease;
+}
+
+@keyframes popup-fade-in {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
     }
 }

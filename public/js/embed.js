@@ -41,7 +41,6 @@ $(document).ready(function () {
                         title: "Something went wrong"
                     });
                     $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                    return;
                 }
             }
 
@@ -65,6 +64,8 @@ $(document).ready(function () {
                             icon: "error",
                             title: "Something Went wrong"
                         });
+
+                        $(".swal2-container").attr("style", "z-index: 100000 !important;");
                     })
 
                 if (checked) {

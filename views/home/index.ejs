@@ -1,4 +1,4 @@
-<%- include("partials/header",{title}) -%>
+<%- include("partials/header",{title, accessLevel}) -%>
     <div class="overlay"></div>
     <div class="container">
         <section class="left">
@@ -99,6 +99,23 @@
             </div>
         </div>
     </div>
+    <% if (userType == "admin" || userType == "owner") { %>
+        <div id="custom-context-menu-file" class="context-menu" style="display: none;">
+            <ul>
+                <li id="file-open"><i class="fa fa-file-pdf"></i> Open</li>
+                <li id="file-rename"><i class="fa-solid fa-i-cursor"></i> Rename</li>
+                <% if (userType == "owner") { %>
+                    <li id="file-download"><i class="fa fa-download"></i> Download</li>
+                <% } %>
+                <li id="file-delete"><i class="fa-regular fa-trash-can"></i> Delete</li>
+                <% if (userType == "owner") { %>
+                    <li id="file-info"><i class="fa fa-info-circle"></i> Get Info</li>
+                <% } %>
+            </ul>
+        </div>
+    <% } %>
+    
+
     <script src="/js/embed.js"></script>
     <script>
         function folderSlug() {
@@ -297,12 +314,10 @@
         `).join('');
 
                 const files = data['files'].map(item => `
-            <div class="file-container">
-                <a class="content" data-embed="${item.uniqueName}" data-name="${item.name}">
-                    <div class="icon fa fa-file-pdf"></div>
-                    <div class="text">${item.name}</div>
-                </a>
-            </div>
+            <a class="content file-menu" data-embed="${item.uniqueName}" data-name="${item.name}">
+                <div class="icon fa fa-file-pdf"></div>
+                <div class="text">${item.name}</div>
+            </a>
         `).join('');
 
                 const currentUrl = window.location.pathname;
@@ -378,7 +393,5 @@
             updateContent(initialPath);
 
         });
-
-
     </script>
     <%- include("partials/footer") -%>
