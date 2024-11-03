@@ -9,6 +9,7 @@ const bookmarks = require("../models/bookmarks");
 const myCache = require("../middleware/cache");
 const path = require("path");
 const fs = require("fs");
+const users = require("../models/users");
 
 
 require("dotenv").config();
@@ -162,13 +163,20 @@ router.post("/getFileData/:uniqueName", async(req, res) => {
 
         const uniqueName = req.params.uniqueName;
 
-        const data = await files.findOne({
+        let data = await files.findOne({
             uniqueName: uniqueName,
             accessLevel: { $in: accessLevel }
         });
         
         if (data) {
-            return res.status(200).send({success: true, data});
+            const addedBy = await users.findById(data.uploadedBy);
+        
+            const responseData = {
+                ...data.toObject(), 
+                uploadedBy: addedBy ? `${addedBy.name} (${addedBy.role})` : "Unknown"
+            };
+        
+            return res.status(200).send({ success: true, data: responseData });
         } else {
             return res.status(404).send({ success: false, msg: "File not found" });
         }
