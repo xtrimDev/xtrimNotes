@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renameFile.addEventListener("click", async () => {
         const { value: fileName } = await Swal.fire({
             input: "text",
-            title: "Enter New name",
+            title: "Enter New Name",
             inputPlaceholder: "Enter file name",
             inputValue: renameFile.dataset.name,
             customClass: {
@@ -123,51 +123,56 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             showCancelButton: true,
             inputValidator: (value) => {
-                if (value.toLowerCase() == renameFile.dataset.name.toLowerCase()) {
-                    return "The old name and new name are same.";
-                } else if (value == "") {
-                    return "Please Enter the file name";
+                const validFileNamePattern = /^[\w\s\-\(\)\[\]\{\}\.,]+$/;
+                
+                if (value.toLowerCase() === renameFile.dataset.name.toLowerCase()) {
+                    return "The old name and new name are the same.";
+                } else if (value === "") {
+                    return "Please enter the file name.";
+                } else if (!validFileNamePattern.test(value)) {
+                    return 'File name can only contain letters, numbers, spaces, "-", "(", ")", "[", "]", "{", "}", ".", and ","';
                 }
             }
         });
+        
         if (fileName) {
             try {
                 const response = await fetch(`/action/rename/file/${renameFile.dataset.uniqueId}/${fileName}`, {
                     method: "POST",
                 });
-
+    
                 // Check if the response is OK (status in the range 200-299)
                 if (!response.ok) {
                     const res = await response.json(); // Parse the JSON response
-
+    
                     if (res?.msg) {
                         Toast.fire({
                             icon: "error",
                             title: res.msg
                         });
                         $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                        return
+                        return;
                     }
-
+    
                     Toast.fire({
                         icon: "error",
                         title: "Something went wrong"
                     });
                     $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                    return
+                    return;
                 }
-
+    
                 const res = await response.json(); // Parse the JSON response
-
+    
                 if (res?.success) {
                     Toast.fire({
                         icon: "success",
                         title: "Name changed successfully"
                     });
                     $(".swal2-container").attr("style", "z-index: 100000 !important;");
-
+    
                     updateContent(window.location.pathname, document.title, true);
-                    return
+                    return;
                 } else {
                     if (res?.msg) {
                         Toast.fire({
@@ -175,14 +180,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             title: res.msg
                         });
                         $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                        return
+                        return;
                     }
                     Toast.fire({
                         icon: "error",
                         title: "Something went wrong"
                     });
                     $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                    return
+                    return;
                 }
             } catch (error) {
                 Toast.fire({
@@ -190,16 +195,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     title: "Something went wrong"
                 });
                 $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                return
+                return;
             }
         }
     });
+    
 
 
     renameFolder.addEventListener("click", async () => {
         const { value: folderName } = await Swal.fire({
             input: "text",
-            title: "Enter New name",
+            title: "Enter New Name",
             inputPlaceholder: "Enter folder name",
             inputValue: renameFolder.dataset.name,
             customClass: {
@@ -215,20 +221,25 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             showCancelButton: true,
             inputValidator: (value) => {
-                if (value.toLowerCase() == renameFolder.dataset.name.toLowerCase()) {
-                    return "The old name and new name are same.";
-                }else if (value == "") {
-                    return "Please Enter the folder name";
+                const validFolderNamePattern = /^[\w\s\-\(\)\[\]\{\}\.,]+$/;
+                
+                if (value.toLowerCase() === renameFolder.dataset.name.toLowerCase()) {
+                    return "The old name and new name are the same.";
+                } else if (value === "") {
+                    return "Please enter the folder name.";
+                } else if (!validFolderNamePattern.test(value)) {
+                    return 'Folder name can only contain letters, numbers, spaces, "-", "(", ")", "[", "]", "{", "}", ".", and ","';
                 }
             }
         });
+        
         if (folderName) {
             try {
                 let url = `/action/rename/folder?path=${encodeURIComponent(renameFolder.dataset.path)}&newName=${encodeURIComponent(folderName)}`;
-                const response = await fetch(`${url}`, {
+                const response = await fetch(url, {
                     method: "POST",
                 });
-
+    
                 // Check if the response is OK (status in the range 200-299)
                 if (!response.ok) {
                     const res = await response.json();
@@ -238,27 +249,27 @@ document.addEventListener('DOMContentLoaded', () => {
                             title: res.msg
                         });
                         $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                        return
+                        return;
                     }
                     Toast.fire({
                         icon: "error",
                         title: "Something went wrong"
                     });
                     $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                    return
+                    return;
                 }
-
+    
                 const res = await response.json(); // Parse the JSON response
-
+    
                 if (res?.success) {
                     Toast.fire({
                         icon: "success",
                         title: "Name changed successfully"
                     });
                     $(".swal2-container").attr("style", "z-index: 100000 !important;");
-
+    
                     updateContent(window.location.pathname, document.title, true);
-                    return
+                    return;
                 } else {
                     if (res?.msg) {
                         Toast.fire({
@@ -266,14 +277,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             title: res.msg
                         });
                         $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                        return
+                        return;
                     }
                     Toast.fire({
                         icon: "error",
                         title: "Something went wrong"
                     });
                     $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                    return
+                    return;
                 }
             } catch (error) {
                 Toast.fire({
@@ -281,10 +292,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     title: "Something went wrong"
                 });
                 $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                return
+                return;
             }
         }
     });
+    
 
     download?.addEventListener("click", async () => {
         try {
