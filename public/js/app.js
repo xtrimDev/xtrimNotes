@@ -93,6 +93,13 @@ $(document).ready(function () {
             preConfirm: () => {
                 const fileName = document.getElementById('fileName').value;
     
+                // File name validation: Only allow spaces, -, (), [], {}, ., and ,
+                const validFileNamePattern = /^[\w\s\-\(\)\[\]\{\}\.,]+$/;
+                if (!validFileNamePattern.test(fileName)) {
+                    Swal.showValidationMessage('File name can only contain letters, numbers, spaces, "-", "(", ")", "[", "]", "{", "}", ".", and ","');
+                    return false;
+                }
+    
                 if (!fileName) {
                     Swal.showValidationMessage('Please fill all the fields');
                     return false;
@@ -188,6 +195,7 @@ $(document).ready(function () {
         });
     });
     
+    
 
     document?.getElementById("add-folder")?.addEventListener("click", () => {
         Swal.fire({
@@ -224,6 +232,13 @@ $(document).ready(function () {
                 const folderName = document.getElementById('folderName').value;
                 const slug = document.getElementById('slug-folder').value;
                 const visibility = document.getElementById('visibility-folder').value;
+    
+                // Folder name validation: Only allow spaces, -, (), [], {}, ., and ,
+                const validNamePattern = /^[\w\s\-\(\)\[\]\{\}\.,]+$/;
+                if (!validNamePattern.test(folderName)) {
+                    Swal.showValidationMessage('Folder name can only contain letters, numbers, spaces, "-", "(", ")", "[", "]", "{", "}", ".", and ","');
+                    return false;
+                }
     
                 if (!folderName || !slug) {
                     Swal.showValidationMessage('Please fill all the fields');
@@ -315,7 +330,7 @@ $(document).ready(function () {
                 });
             }
         });
-    });
+    });    
     
 
     document.addEventListener("keydown", (event) => {
