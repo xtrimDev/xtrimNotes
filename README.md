@@ -1,6 +1,6 @@
 
 ## Description
-Developed a notes-sharing website, xtrimNotes, for batchmates to easily access academic resources, including notes and previous year question papers (PYQs). Files are organized by year and course for fast retrieval, with the ability to bookmark essential documents. The platform also includes a contact form for user support. This project demonstrates expertise in building efficient, user-focused educational tools that streamline resource sharing and access.
+Developed an interactive web application, xtrimNotes, designed to streamline access to study materials for students. Registered users can securely log in, explore organized study content, and bookmark essential files for easy retrieval. To optimize performance and manage high traffic volumes, I implemented caching techniques, reducing server load and improving user experience. This project not only supports efficient study habits but also showcases scalable, user-friendly web development with a focus on performance and accessibility.
 
 ## Deployment Methods
 
