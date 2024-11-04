@@ -40,9 +40,10 @@ To deploy this project run
 ## Features
 
 - PDF viewer
-- Bookmark 
-- Contact Form
-- Add/Remove files/folders Directly 
+- Secure login and registration
+- Bookmark
+- Add/Remove/rename files/folders Directly
+- Cache Implementation
 
 ## Credits
 - [Sameer singh bhandari](https://github.com/xtrimDev/)
