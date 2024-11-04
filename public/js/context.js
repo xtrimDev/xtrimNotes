@@ -138,6 +138,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Check if the response is OK (status in the range 200-299)
                 if (!response.ok) {
+                    const res = await response.json(); // Parse the JSON response
+
+                    if (res?.msg) {
+                        Toast.fire({
+                            icon: "error",
+                            title: res.msg
+                        });
+                        $(".swal2-container").attr("style", "z-index: 100000 !important;");
+                        return
+                    }
+
                     Toast.fire({
                         icon: "error",
                         title: "Something went wrong"
@@ -158,6 +169,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateContent(window.location.pathname, document.title, true);
                     return
                 } else {
+                    if (res?.msg) {
+                        Toast.fire({
+                            icon: "error",
+                            title: res.msg
+                        });
+                        $(".swal2-container").attr("style", "z-index: 100000 !important;");
+                        return
+                    }
                     Toast.fire({
                         icon: "error",
                         title: "Something went wrong"
@@ -212,6 +231,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Check if the response is OK (status in the range 200-299)
                 if (!response.ok) {
+                    const res = await response.json();
+                    if (res?.msg) {
+                        Toast.fire({
+                            icon: "error",
+                            title: res.msg
+                        });
+                        $(".swal2-container").attr("style", "z-index: 100000 !important;");
+                        return
+                    }
                     Toast.fire({
                         icon: "error",
                         title: "Something went wrong"
@@ -232,6 +260,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateContent(window.location.pathname, document.title, true);
                     return
                 } else {
+                    if (res?.msg) {
+                        Toast.fire({
+                            icon: "error",
+                            title: res.msg
+                        });
+                        $(".swal2-container").attr("style", "z-index: 100000 !important;");
+                        return
+                    }
                     Toast.fire({
                         icon: "error",
                         title: "Something went wrong"

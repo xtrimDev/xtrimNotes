@@ -11,6 +11,7 @@ const path = require("path");
 const fs = require("fs");
 const users = require("../models/users");
 const folders = require("../models/folders");
+const encodeSlug = require("../functions/encodeSlug");
 
 
 require("dotenv").config();
@@ -22,7 +23,7 @@ router.use(express.urlencoded({ extended: true }));
 
 router.post("/rename/file/:uniqueName/:newName", async(req, res) => {
     try {
-        const result = await ensureAuthenticatedForFetching(req, res);
+        let result = await ensureAuthenticatedForFetching(req, res);
 
         if (result?.banned || !result?.authenticated) {
             return res.status(403).json(result);
@@ -39,18 +40,29 @@ router.post("/rename/file/:uniqueName/:newName", async(req, res) => {
         const uniqueName = req.params.uniqueName;
         const newName = req.params.newName;
 
+        result = await files.findOne({uniqueName}) ;
+
+        if (!result) {
+            return res.status(200).send({success: false})
+        }
+
+        result = await files.findOne({folder: result.folder, name: newName, accessLevel: { $in: accessLevel }});
+        
+        if (result) {
+            return res.status(200).send({success: false, msg: "File already exists."})
+        }
+
         await files.updateOne({uniqueName: uniqueName, accessLevel: { $in: accessLevel }}, {$set: {name:  newName}});
 
         return res.status(200).send({success: true})
     } catch (error) {
-        console.log(error)
         return res.status(500).render("errors/500");
     }
 });
 
 router.post("/rename/folder", async(req, res) => {
     try {
-        const result = await ensureAuthenticatedForFetching(req, res);
+        let result = await ensureAuthenticatedForFetching(req, res);
 
         if (result?.banned || !result?.authenticated) {
             return res.status(403).json(result);
@@ -67,11 +79,19 @@ router.post("/rename/folder", async(req, res) => {
         const path = req.query.path;
         const newName = req.query.newName;
 
-        await folders.updateOne({path, accessLevel: { $in: accessLevel }}, {$set: {name:  newName}});
+        let slug = path.substring(0, path.lastIndexOf("/", path.length - 2) + 1);
+        slug += encodeSlug(newName);
+
+        result = await folders.findOne({name: newName, path: slug, accessLevel: { $in: accessLevel }});
+
+        if (result) {
+            return res.status(200).send({success: false, msg: "Folder already exists."})
+        }
+
+        await folders.updateOne({path, accessLevel: { $in: accessLevel }}, {$set: {name:  newName, path: slug}});
 
         return res.status(200).send({success: true})
     } catch (error) {
-        console.log(error)
         return res.status(500).render("errors/500");
     }
 });
@@ -165,7 +185,6 @@ router.post("/delete/file/:uniqueName", async(req, res) => {
             return res.status(404).send({ success: false, msg: "File not found" });
         }
     } catch (error) {
-        console.log(error)
         return res.status(500).render("errors/500");
     }
 });
@@ -210,7 +229,6 @@ router.post("/getFileData/:uniqueName", async(req, res) => {
             return res.status(404).send({ success: false, msg: "File not found" });
         }
     } catch (error) {
-        console.log(error)
         return res.status(500).render("errors/500");
     }
 });
@@ -255,7 +273,6 @@ router.post("/getFolderData", async(req, res) => {
             return res.status(404).send({ success: false, msg: "Folder not found" });
         }
     } catch (error) {
-        console.log(error)
         return res.status(500).render("errors/500");
     }
 });

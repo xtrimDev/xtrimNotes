@@ -43,7 +43,7 @@ router.post("/addFolder", async (req, res) => {
         const folder = await folders.findOne({ path: atFolder }).select("_id path");
 
         if (folder && atFolder != "/") {
-            const ListDuplicateFolders = await folders.findOne({ parentFolder: folder._id, name: folderName });
+            const ListDuplicateFolders = await folders.findOne({ parentFolder: folder._id, name: { $regex: new RegExp(`^${folderName}$`, 'i')} });
 
             if (ListDuplicateFolders) {
                 return res.status(400).json({
