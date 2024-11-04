@@ -390,10 +390,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function infoev() {
         try {
+            // Show SweetAlert loader
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Please wait while we load the information.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading(); // Display the loader
+                }
+            });
+    
+            // Send the fetch request
             const response = await fetch(`/action/getFileData/${download?.dataset?.uniqueId}`, {
                 method: "POST",
             });
-
+    
+            // Close the loader once the response is received
+            Swal.close();
+    
+            // Check if the response was successful
             if (!response.ok) {
                 Toast.fire({
                     icon: "error",
@@ -402,16 +417,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 $(".swal2-container").attr("style", "z-index: 100000 !important;");
                 return;
             }
-
+    
             const res = await response.json(); // Parse the JSON response
-
+    
             if (res?.success) {
                 const popupOverlay = document.createElement('div');
                 popupOverlay.className = 'popup-overlay';
-
+    
                 let updatedAt = new Date(res.data.updatedAt);
-
-                // Format to date and time
                 updatedAt = updatedAt.toLocaleString('en-GB', {
                     year: 'numeric',
                     month: '2-digit',
@@ -419,12 +432,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit',
-                    hour12: true // Use 24-hour format
+                    hour12: true
                 });
-
+    
                 let createdAt = new Date(res.data.createdAt);
-
-                // Format to date and time
                 createdAt = createdAt.toLocaleString('en-GB', {
                     year: 'numeric',
                     month: '2-digit',
@@ -432,133 +443,73 @@ document.addEventListener('DOMContentLoaded', () => {
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit',
-                    hour12: true // Use 24-hour format
+                    hour12: true
                 });
-
-                // Create popup content with icons and styled information
+    
                 const popup = document.createElement('div');
                 popup.className = 'popup';
                 popup.innerHTML = `
-        <div class="popup-header">
-            <h2><i class="fa fa-info-circle"></i> File Information</h2>
-        </div>
-        <div class="popup-content">
-            <p><i class="fa-solid fa-i-cursor"></i> <strong>File Name:</strong> ${res.data.name}</p>
-            <p><i class="fa fa-id-badge"></i> <strong>Unique Name:</strong> ${res.data.uniqueName}</p>
-            <p><i class="fa-solid fa-user-lock"></i> <strong>Access Level:</strong> ${res.data.accessLevel}</p>
-            <p><i class="fa-solid fa-user-secret"></i> <strong>Added By:</strong> ${res.data.uploadedBy}</p>
-            <p><i class="fa-regular fa-calendar"></i> <strong>Added at:</strong> ${createdAt}</p>
-            <p><i class="fa-solid fa-clock-rotate-left"></i> <strong>Updated at:</strong> ${updatedAt}</p>
-        </div>
-        <div class="popup-footer">
-            <button onclick="closePopup()"><i class="fa fa-times"></i> Close</button>
-        </div>
-    `;
-                // Append popup elements to the body
+                    <div class="popup-header">
+                        <h2><i class="fa fa-info-circle"></i> File Information</h2>
+                    </div>
+                    <div class="popup-content">
+                        <p><i class="fa-solid fa-i-cursor"></i> <strong>File Name:</strong> ${res.data.name}</p>
+                        <p><i class="fa fa-id-badge"></i> <strong>Unique Name:</strong> ${res.data.uniqueName}</p>
+                        <p><i class="fa-solid fa-user-lock"></i> <strong>Access Level:</strong> ${res.data.accessLevel}</p>
+                        <p><i class="fa-solid fa-user-secret"></i> <strong>Added By:</strong> ${res.data.uploadedBy}</p>
+                        <p><i class="fa-regular fa-calendar"></i> <strong>Added at:</strong> ${createdAt}</p>
+                        <p><i class="fa-solid fa-clock-rotate-left"></i> <strong>Updated at:</strong> ${updatedAt}</p>
+                    </div>
+                    <div class="popup-footer">
+                        <button onclick="closePopup()"><i class="fa fa-times"></i> Close</button>
+                    </div>
+                `;
+                
                 popupOverlay.appendChild(popup);
                 document.body.appendChild(popupOverlay);
-                return
+                return;
             } else {
                 Toast.fire({
                     icon: "error",
                     title: "Error loading info"
                 });
                 $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                return
+                return;
             }
         } catch (err) {
-            console.log(err)
+            console.error(err);
+            Swal.close(); // Close the loader if an error occurs
             Toast.fire({
                 icon: "error",
                 title: "Error Loading info"
             });
             $(".swal2-container").attr("style", "z-index: 100000 !important;");
-            return;
         }
-
-
     }
+    
 
-    infoFolder?.addEventListener("click", async() => {
-        try {
-            const response = await fetch(`/action/getFolderData?path=${encodeURIComponent(infoFolder?.dataset?.path)}`, {
-                method: "POST",
-            });
-
-            if (!response.ok) {
-                Toast.fire({
-                    icon: "error",
-                    title: "Error Loading info"
-                });
-                $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                return;
+infoFolder?.addEventListener("click", async () => {
+    try {
+        // Show SweetAlert loader
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Please wait while we load the information.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading(); // Display the loader
             }
+        });
 
-            const res = await response.json(); // Parse the JSON response
+        // Send the fetch request
+        const response = await fetch(`/action/getFolderData?path=${encodeURIComponent(infoFolder?.dataset?.path)}`, {
+            method: "POST",
+        });
 
-            if (res?.success) {
-                const popupOverlay = document.createElement('div');
-                popupOverlay.className = 'popup-overlay';
+        // Close the loader once the response is received
+        Swal.close();
 
-                let updatedAt = new Date(res.data.updatedAt);
-
-                // Format to date and time
-                updatedAt = updatedAt.toLocaleString('en-GB', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: true // Use 24-hour format
-                });
-
-                let createdAt = new Date(res.data.createdAt);
-
-                // Format to date and time
-                createdAt = createdAt.toLocaleString('en-GB', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: true // Use 24-hour format
-                });
-
-                // Create popup content with icons and styled information
-                const popup = document.createElement('div');
-                popup.className = 'popup';
-                popup.innerHTML = `
-        <div class="popup-header">
-            <h2><i class="fa fa-info-circle"></i> File Information</h2>
-        </div>
-        <div class="popup-content">
-            <p><i class="fa-solid fa-i-cursor"></i> <strong>File Name:</strong> ${res.data.name}</p>
-            <p><i class="fa-solid fa-bezier-curve"></i> <strong>Path:</strong> ${res.data.path}</p>
-            <p><i class="fa-solid fa-user-lock"></i> <strong>Access Level:</strong> ${res.data.accessLevel}</p>
-            <p><i class="fa-solid fa-user-secret"></i> <strong>Added By:</strong> ${res.data.createdBy}</p>
-            <p><i class="fa-regular fa-calendar"></i> <strong>Added at:</strong> ${createdAt}</p>
-            <p><i class="fa-solid fa-clock-rotate-left"></i> <strong>Updated at:</strong> ${updatedAt}</p>
-        </div>
-        <div class="popup-footer">
-            <button onclick="closePopup()"><i class="fa fa-times"></i> Close</button>
-        </div>
-    `;
-                // Append popup elements to the body
-                popupOverlay.appendChild(popup);
-                document.body.appendChild(popupOverlay);
-                return
-            } else {
-                Toast.fire({
-                    icon: "error",
-                    title: "Error loading info"
-                });
-                $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                return
-            }
-        } catch (err) {
-            console.log(err)
+        // Check if the response was successful
+        if (!response.ok) {
             Toast.fire({
                 icon: "error",
                 title: "Error Loading info"
@@ -567,8 +518,75 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const res = await response.json(); // Parse the JSON response
 
-    });
+        if (res?.success) {
+            const popupOverlay = document.createElement('div');
+            popupOverlay.className = 'popup-overlay';
+
+            let updatedAt = new Date(res.data.updatedAt);
+            updatedAt = updatedAt.toLocaleString('en-GB', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+
+            let createdAt = new Date(res.data.createdAt);
+            createdAt = createdAt.toLocaleString('en-GB', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+
+            const popup = document.createElement('div');
+            popup.className = 'popup';
+            popup.innerHTML = `
+                <div class="popup-header">
+                    <h2><i class="fa fa-info-circle"></i> File Information</h2>
+                </div>
+                <div class="popup-content">
+                    <p><i class="fa-solid fa-i-cursor"></i> <strong>File Name:</strong> ${res.data.name}</p>
+                    <p><i class="fa-solid fa-bezier-curve"></i> <strong>Path:</strong> ${res.data.path}</p>
+                    <p><i class="fa-solid fa-user-lock"></i> <strong>Access Level:</strong> ${res.data.accessLevel}</p>
+                    <p><i class="fa-solid fa-user-secret"></i> <strong>Added By:</strong> ${res.data.createdBy}</p>
+                    <p><i class="fa-regular fa-calendar"></i> <strong>Added at:</strong> ${createdAt}</p>
+                    <p><i class="fa-solid fa-clock-rotate-left"></i> <strong>Updated at:</strong> ${updatedAt}</p>
+                </div>
+                <div class="popup-footer">
+                    <button onclick="closePopup()"><i class="fa fa-times"></i> Close</button>
+                </div>
+            `;
+            
+            popupOverlay.appendChild(popup);
+            document.body.appendChild(popupOverlay);
+            return;
+        } else {
+            Toast.fire({
+                icon: "error",
+                title: "Error loading info"
+            });
+            $(".swal2-container").attr("style", "z-index: 100000 !important;");
+            return;
+        }
+    } catch (err) {
+        console.error(err);
+        Swal.close(); // Close the loader if an error occurs
+        Toast.fire({
+            icon: "error",
+            title: "Error Loading info"
+        });
+        $(".swal2-container").attr("style", "z-index: 100000 !important;");
+    }
+});
+
 });
 
 function closePopup() {

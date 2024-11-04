@@ -92,15 +92,25 @@ $(document).ready(function () {
             },
             preConfirm: () => {
                 const fileName = document.getElementById('fileName').value;
-
+    
                 if (!fileName) {
                     Swal.showValidationMessage('Please fill all the fields');
                     return false;
                 }
-
+    
                 let uploadForm = document.querySelector(".file-upload");
                 let formData = new FormData(uploadForm);
-
+    
+                // Show loading indicator
+                Swal.fire({
+                    title: 'Uploading...',
+                    text: 'Please wait while your file is being uploaded.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+    
                 $.ajax({
                     type: 'POST',
                     url: '/dict/addFile',
@@ -108,6 +118,8 @@ $(document).ready(function () {
                     processData: false,
                     contentType: false,
                     success: (response) => {
+                        Swal.close(); // Close loader
+    
                         if (response?.success && response?.permission) {
                             Swal.fire({
                                 icon: 'success',
@@ -130,23 +142,24 @@ $(document).ready(function () {
                         }
                     },
                     error: (xhr, status, error) => {
+                        Swal.close(); // Close loader in case of error
+    
                         if (xhr.status == 400) {
                             const response = JSON.parse(xhr.responseText);
-
+    
                             if (!response.permission) {
                                 Swal.fire({
                                     icon: 'info',
                                     title: `Not authorized`,
-                                    text: "Your are not authorized to upload a file",
+                                    text: "You are not authorized to upload a file",
                                     showConfirmButton: false,
                                     timer: 1500,
                                 }).then(() => {
                                     updateContent(window.location.pathname, document.title);
                                 });
-
-                                return
+                                return;
                             }
-
+    
                             Swal.fire({
                                 icon: 'info',
                                 title: `Error`,
@@ -156,7 +169,7 @@ $(document).ready(function () {
                             }).then(() => {
                                 updateContent(window.location.pathname, document.title);
                             });
-
+    
                             return;
                         } else {
                             Swal.fire({
@@ -170,10 +183,11 @@ $(document).ready(function () {
                             });
                         }
                     }
-                })
+                });
             }
         });
     });
+    
 
     document?.getElementById("add-folder")?.addEventListener("click", () => {
         Swal.fire({
@@ -210,19 +224,31 @@ $(document).ready(function () {
                 const folderName = document.getElementById('folderName').value;
                 const slug = document.getElementById('slug-folder').value;
                 const visibility = document.getElementById('visibility-folder').value;
-
+    
                 if (!folderName || !slug) {
                     Swal.showValidationMessage('Please fill all the fields');
                     return false;
                 }
-
+    
                 const currentUrl = window.location.pathname;
-
+    
+                // Show loading indicator
+                Swal.fire({
+                    title: 'Creating Folder...',
+                    text: 'Please wait while the folder is being created.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+    
                 $.ajax({
                     type: 'POST',
                     url: '/dict/addFolder',
                     data: `folderName=${encodeURIComponent(folderName)}&slug=${encodeURIComponent(slug)}&visibility=${encodeURIComponent(visibility)}&atFolder=${encodeURIComponent(currentUrl)}`,
                     success: (response) => {
+                        Swal.close(); // Close loader
+    
                         if (response?.success && response?.permission) {
                             Swal.fire({
                                 icon: 'success',
@@ -245,23 +271,24 @@ $(document).ready(function () {
                         }
                     },
                     error: (xhr, status, error) => {
+                        Swal.close(); // Close loader on error
+    
                         if (xhr.status == 400) {
                             const response = JSON.parse(xhr.responseText);
-
+    
                             if (!response.permission) {
                                 Swal.fire({
                                     icon: 'info',
                                     title: `Not authorized`,
-                                    text: "Your are not authorized to create a folder",
+                                    text: "You are not authorized to create a folder",
                                     showConfirmButton: false,
                                     timer: 1500,
                                 }).then(() => {
                                     updateContent(window.location.pathname, document.title);
                                 });
-
-                                return
+                                return;
                             }
-
+    
                             Swal.fire({
                                 icon: 'info',
                                 title: `Error`,
@@ -271,7 +298,7 @@ $(document).ready(function () {
                             }).then(() => {
                                 updateContent(window.location.pathname, document.title);
                             });
-
+    
                             return;
                         } else {
                             Swal.fire({
@@ -285,10 +312,11 @@ $(document).ready(function () {
                             });
                         }
                     }
-                })
+                });
             }
         });
     });
+    
 
     document.addEventListener("keydown", (event) => {
         if (event.key === "PrintScreen" || (event.ctrlKey && event.key === "p")) {
