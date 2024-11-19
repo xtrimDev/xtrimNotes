@@ -59,21 +59,25 @@ document.getElementById('pdf-container').addEventListener('scroll', () => {
     pageCanvases.forEach((canvas, index) => {
         if (canvas.getBoundingClientRect().top >= 0 && canvas.getBoundingClientRect().top <= window.innerHeight / 2) {
             currentPage = index + 1;
-            document.getElementById('current-page').textContent = currentPage;
+            document.getElementById('current-page').value  = currentPage;
         }
     });
 });
 
-document.getElementById('goto-button').addEventListener('click', () => {
-    const pageNum = parseInt(document.getElementById('goto-input').value);
+document.getElementById('current-page').addEventListener('keypress', (event) => {
+    console.log(event)
+    if(event.key=="Enter"){
+    const pageNum = event.target.value;
     if (pageNum >= 1 && pageNum <= totalPages) {
         const targetCanvas = document.getElementById(`page-${pageNum}`);
         if (targetCanvas) {
             targetCanvas.scrollIntoView({ behavior: 'smooth' });
             currentPage = pageNum;
-            document.getElementById('current-page').textContent = currentPage;
+            document.getElementById('current-page').value = currentPage;
         }
     } else {
         alert(`Please enter a valid page number between 1 and ${totalPages}.`);
-    }
+    }}
 });
+
+

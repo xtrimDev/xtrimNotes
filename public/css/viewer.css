@@ -1,3 +1,4 @@
+
 body {
     background-color: black;
     margin: 0;
@@ -30,15 +31,20 @@ body {
 
 #page-number {
     position: fixed;
-    bottom: 40px; /* Adjusted for the new input */
+    bottom: 0px; /* Adjusted for the new input */
     left: 0;
     width: 100%;
-    background-color: #333;
+    background-color: #000000;
     color: white;
     text-align: center;
     padding: 10px;
     font-size: 18px;
     z-index: 10;
+}
+
+#page-number #current-page{
+    width: 40px;
+    text-align: center;
 }
 
 #goto-input {
@@ -70,7 +76,7 @@ body {
     flex-direction: column;
     align-items: center;
     flex-grow: 1;
-    margin-bottom: 80px; /* Adjusted for the fixed elements */
+    margin-bottom: 40px; /* Adjusted for the fixed elements */
     overflow-y: scroll;
     overflow-x: auto;
     width: 100%;

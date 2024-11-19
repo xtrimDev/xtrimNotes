@@ -23,7 +23,7 @@ router.all("/", ensureAuthenticated, (req, res) => {
 });
 
 router.get("/login", ensureAuthenticated, (req, res) => {
-    return res.render("auth/login");
+    return res.render("auth/login",{setting : {appName: process.env.APP_NAME, teleLink: process.env.TELE_LINK}});
 });
 
 router.post("/login", ensureAuthenticated, async (req, res, next) => {

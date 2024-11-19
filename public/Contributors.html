@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contributors</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    /* General Reset */
+    body,
+    h1,
+    h2,
+    p,
+    button,
+    a {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #121212;
+      color: #e0e0e0;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 2rem;
+      background: #1f1f1f;
+      color: #f1f1f1;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .header h1 {
+      font-size: 2.8rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    .header p {
+      font-size: 1.2rem;
+      color: #a8dadc;
+    }
+
+    /* Contributors Section */
+    .contributors {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 2rem;
+      gap: 2rem;
+    }
+
+    /* Contributor Card */
+    .contributor-card {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 12px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      width: 320px;
+      text-align: center;
+      padding: 1.5rem;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .contributor-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Profile Photo */
+    .profile-photo-wrapper {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1rem;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid #4CAF50;
+    }
+
+    .profile-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Name and Contribution */
+    .name {
+      font-size: 1.6rem;
+      color: #f0f0f0;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+
+    .contribution {
+      font-size: 1rem;
+      color: #bbb;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+
+    /* Social Links */
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .social-link {
+      color: #4CAF50;
+      font-size: 1.5rem;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .social-link:hover {
+      color: #66bb6a;
+      transform: scale(1.1);
+    }
+
+    /* Connect Button */
+    .connect-btn {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .connect-btn:hover {
+      background: #444;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <h1>Meet Our Contributors</h1>
+    <p>Learn about the amazing people who make everything possible.</p>
+  </header>
+  <main class="contributors">
+    <!-- Contributor Card -->
+    <div class="contributor-card">
+      <div class="profile-photo-wrapper">
+        <img src="/images/contributors/profile-pic.png" alt="Sameer Singh Bhandari" class="profile-photo">
+      </div>
+      <h2 class="name">Sameer Singh Bhandari</h2>
+      <p class="contribution">Developed the backend architecture.</p>
+      <div class="social-links">
+        <a href="https://xtrimdev.github.io" target="_blank" class="social-link">
+          <i class="fas fa-globe"></i>
+        </a>
+        <a href="https://github.com/xtrimDev" target="_blank" class="social-link">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://www.linkedin.com/in/xtrimDev" target="_blank" class="social-link">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="contributor-card">
+      <div class="profile-photo-wrapper">
+        <img src="/images/contributors/1722238564323.jpeg" alt="Anas ali" class="profile-photo">
+      </div>
+      <h2 class="name">Anas Ali</h2>
+      <p class="contribution">Designed the user interface for the platform.</p>
+      <div class="social-links">
+        <a href="https://anasali30.github.io/HackerX.github.io/" target="_blank" class="social-link">
+          <i class="fas fa-globe"></i>
+        </a>
+        <a href="https://github.com/AnasAli30" target="_blank" class="social-link">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://www.linkedin.com/in/anas--ali/" target="_blank" class="social-link">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>

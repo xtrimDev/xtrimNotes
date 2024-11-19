@@ -131,7 +131,7 @@ $(document).ready(function () {
             const canvasTop = canvases[i].offsetTop;
             const canvasHeight = canvases[i].clientHeight;
             if (scrollPosition >= canvasTop && scrollPosition < (canvasTop + canvasHeight)) {
-                $('#currentPage').text(i + 1);
+                $('#current-page').val(i + 1);
                 break;
             }
         }
@@ -142,12 +142,14 @@ $(document).ready(function () {
         $('#pdfViewer').empty();
     });
 
-    $('#goto-button').on('click', function () {
-        const pageNum = parseInt($('#goto-input').val());
+    $('#current-page').on('keypress', (event) => {
+    console.log(event)
+    if(event.key=="Enter"){
+    const pageNum = event.target.value;
         if (pageNum >= 1 && pageNum <= totalPages) {
             $(`#page-${pageNum}`)[0]?.scrollIntoView({ behavior: 'smooth' });
         } else {
             alert(`Please enter a valid page number between 1 and ${totalPages}.`);
         }
-    });
+}});
 });

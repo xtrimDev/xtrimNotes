@@ -91,12 +91,7 @@
         <div class="pdfViewer" id="pdfViewer"></div>
 
         <div class="toolbar">
-            <div class="pageInfo">Page: <span id="currentPage">1</span> / <span id="totalPages">1</span></div>
-            <div class="pageInfo">
-                Go to page:
-                <input type="number" id="goto-input" min="1">
-                <button id="goto-button">Go</button>
-            </div>
+            <div class="pageInfo">Page: <input type="number" value="1" id="current-page"></input>/ <span id="totalPages">1</span></div>
         </div>
     </div>
     <% if (userType == "admin" || userType == "owner") { %>
@@ -157,12 +152,8 @@
         const footer = `
             <div class="footer">
                 <div class="footer-item">
-                    <div class="icon donation"></div>
-                    <div class="text">Want to help us by making a small donation? <span>Donate</span></div>
-                </div>
-                <div class="footer-item">
                     <div class="icon group"></div>
-                    <div class="text">Want to know about me? Check out <span onclick="window.open('https://xtrimdev.github.io/', '_blank')">Contributors</span></div>
+                    <div class="text">Want to know about me? Check out <span onclick="window.open('/Contributors.html', '_blank')">Contributors</span></div>
                 </div>
             </div>`;
 
