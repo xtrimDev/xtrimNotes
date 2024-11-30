@@ -19,12 +19,12 @@ router.post("/:uniqueName", async (req, res) => {
         }
 
         if (req?.user?.role == "owner") {
-            accessLevel = ["owner","admin", "user"];
-        }  else if (req?.user?.role == "admin") {
+            accessLevel = ["owner", "admin", "user"];
+        } else if (req?.user?.role == "admin") {
             accessLevel = ["admin", "user"];
         } else {
             accessLevel = ["user"];
-        } 
+        }
 
         const uniqueName = req.params.uniqueName;
         let fileDbData = {};
@@ -32,10 +32,12 @@ router.post("/:uniqueName", async (req, res) => {
         if (accessLevel[0] == "user" && myCache.has(`${accessLevel[0]}-${uniqueName}`)) {
             fileDbData = myCache.get(`${accessLevel[0]}-${uniqueName}`);
         } else {
-            fileDbData = await files.findOne({ uniqueName, accessLevel: { $in: accessLevel } }).select("url name -_id");
-            
+            fileDbData = await files
+                .findOne({ uniqueName, accessLevel: { $in: accessLevel } })
+                .select("url name -_id");
+
             if (accessLevel[0] == "user")
-                myCache.set(`${accessLevel[0]}-${uniqueName}`,fileDbData)
+                myCache.set(`${accessLevel[0]}-${uniqueName}`, fileDbData);
         }
 
         if (fileDbData) {
@@ -45,6 +47,21 @@ router.post("/:uniqueName", async (req, res) => {
                 const stat = fs.statSync(pdfPath);
                 const fileSize = stat.size;
                 const range = req.headers.range;
+                const fileModifiedTime = stat.mtime.toUTCString(); // Last modified time
+                const etag = `"${fileSize}-${stat.mtimeMs}"`; // Generate ETag
+
+                // Set caching headers
+                res.setHeader('Cache-Control', 'public, max-age=31536000, immutable'); // Cache for 1 year
+                res.setHeader('Last-Modified', fileModifiedTime);
+                res.setHeader('ETag', etag);
+
+                // Check for conditional headers
+                if (req.headers['if-none-match'] === etag) {
+                    return res.status(304).end(); // Not Modified
+                }
+                if (req.headers['if-modified-since'] === fileModifiedTime) {
+                    return res.status(304).end(); // Not Modified
+                }
 
                 res.setHeader('Content-Type', 'application/pdf');
                 res.setHeader('Content-Disposition', `inline; filename="${fileDbData.name}"`);
@@ -77,15 +94,19 @@ router.post("/:uniqueName", async (req, res) => {
                     pdfStream.on('error', () => res.status(500).render("errors/500"));
                 }
             } else {
+
+                console.log("file not exits" + fs.existsSync(pdfPath));
                 return res.status(404).render("errors/404");
             }
         } else {
+            console.log("fileDbData not exists");
             return res.status(404).render("errors/404");
-        }        
+        }
     } catch (error) {
         return res.status(500).render("errors/500");
     }
 });
+
 
 
 module.exports = router;
