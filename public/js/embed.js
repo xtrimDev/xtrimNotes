@@ -1,6 +1,47 @@
 $(document).ready(function () {
     let pdf = null, scale = 1.5, totalPages = 0;
 
+    // IndexedDB Setup
+    function initIndexedDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open("PDFCacheDB", 1);
+            request.onupgradeneeded = function (event) {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains("PDFStore")) {
+                    db.createObjectStore("PDFStore", { keyPath: "key" });
+                }
+            };
+            request.onsuccess = function (event) {
+                resolve(event.target.result);
+            };
+            request.onerror = function () {
+                reject("Failed to initialize IndexedDB");
+            };
+        });
+    }
+
+    async function storePDFInIndexedDB(key, pdfData) {
+        const db = await initIndexedDB();
+        const transaction = db.transaction("PDFStore", "readwrite");
+        const store = transaction.objectStore("PDFStore");
+        store.put({ key, data: pdfData });
+    }
+
+    async function getPDFfromIndexedDB(key) {
+        return new Promise(async (resolve, reject) => {
+            const db = await initIndexedDB();
+            const transaction = db.transaction("PDFStore", "readonly");
+            const store = transaction.objectStore("PDFStore");
+            const request = store.get(key);
+            request.onsuccess = function () {
+                resolve(request.result ? request.result.data : null);
+            };
+            request.onerror = function () {
+                reject("Failed to retrieve PDF from IndexedDB");
+            };
+        });
+    }
+
     document.addEventListener("click", async function (event) {
         let targetElement = event.target.closest('[data-embed]');
 
@@ -10,7 +51,6 @@ $(document).ready(function () {
             const BookmarkBtnIcon = $("#bookmark-btn .icon");
             const embedTitle = targetElement.getAttribute('data-name') || 'Document Preview';
             const url = `/embed/${embedValue}`;
-            const cachedPdf = localStorage.getItem(`pdf-${embedValue}`);
             const viewerContainer = $('#viewerContainer');
             const pdfViewer = $('#pdfViewer');
             const pageTitle = $('#pageTitle');
@@ -34,7 +74,7 @@ $(document).ready(function () {
                     const response = await fetch("/bookmarks", { method: "POST" });
                     if (!response.ok) throw new Error("Failed to fetch bookmarks");
                     data = await response.json();
-                    cache.set("/bookmarks", data); // Set the initial cache if not present
+                    cache.set("/bookmarks", data);
                 } catch (error) {
                     Toast.fire({
                         icon: "error",
@@ -52,48 +92,42 @@ $(document).ready(function () {
                 BookmarkBtn.removeAttr("disabled")
             } else {
                 let checked = false;
-                
-                fetch(`/get/bookmark/${embedValue}`, { method: "POST" })
-                    .then((response) => response.json())  // Call json() as a function
-                    .then((data) => {
-                        (data.bookmarked)
-                            ? checked = true
-                            : checked = false
-                    }).catch(() => {
-                        Toast.fire({
-                            icon: "error",
-                            title: "Something Went wrong"
-                        });
 
-                        $(".swal2-container").attr("style", "z-index: 100000 !important;");
-                    })
-
-                if (checked) {
-                    data.files.push({ name: embedTitle, uniqueName: embedValue }); // Add the new file
-                    BookmarkBtnIcon.attr("class", "icon fa-star fa-solid")
-                } else {
-                    BookmarkBtnIcon.attr("class", "icon fa-star fa-regular")
+                try {
+                    const response = await fetch(`/get/bookmark/${embedValue}`, { method: "POST" });
+                    const result = await response.json();
+                    checked = result.bookmarked;
+                } catch {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Something Went wrong"
+                    });
+                    $(".swal2-container").attr("style", "z-index: 100000 !important;");
                 }
 
-                BookmarkBtn.removeAttr("disabled")
+                if (checked) {
+                    data.files.push({ name: embedTitle, uniqueName: embedValue });
+                    BookmarkBtnIcon.attr("class", "icon fa-star fa-solid");
+                } else {
+                    BookmarkBtnIcon.attr("class", "icon fa-star fa-regular");
+                }
+
+                BookmarkBtn.removeAttr("disabled");
             }
 
-            if (cachedPdf) {
-                // Load PDF from localStorage
-                const pdfData = new Uint8Array(JSON.parse(cachedPdf));
-                loadAndRenderPDF(pdfData);
-            } else {
-                // Fetch PDF from server once
-                fetch(url, { method: "POST" })
-                    .then(response => response.arrayBuffer())
-                    .then(buffer => {
-                        // Cache the data in localStorage
-                        localStorage.setItem(`pdf-${embedValue}`, JSON.stringify(Array.from(new Uint8Array(buffer))));
-                        loadAndRenderPDF(new Uint8Array(buffer));
-                    })
-                    .catch(() => {
-                        pdfViewer.html('<div style="font-size: 1.5rem; color: white; position: relative; top: 50%;">Error while loading PDF...</div>');
-                    });
+            try {
+                const cachedPdf = await getPDFfromIndexedDB(embedValue);
+                if (cachedPdf) {
+                    loadAndRenderPDF(new Uint8Array(cachedPdf));
+                } else {
+                    const response = await fetch(url, { method: "POST" });
+                    const buffer = await response.arrayBuffer();
+                    const pdfData = new Uint8Array(buffer);
+                    await storePDFInIndexedDB(embedValue, Array.from(pdfData));
+                    loadAndRenderPDF(pdfData);
+                }
+            } catch {
+                pdfViewer.html('<div style="font-size: 1.5rem; color: white; position: relative; top: 50%;">Error while loading PDF...</div>');
             }
         }
     });
@@ -111,7 +145,7 @@ $(document).ready(function () {
     }
 
     function renderPagesSequentially(pageNum) {
-        if (pageNum > totalPages) return; // Exit condition
+        if (pageNum > totalPages) return;
         pdf.getPage(pageNum).then(page => {
             const viewport = page.getViewport({ scale });
             const pageCanvas = $('<canvas>').attr('id', `page-${pageNum}`).attr('width', viewport.width).attr('height', viewport.height)[0];
@@ -119,7 +153,7 @@ $(document).ready(function () {
 
             page.render({ canvasContext: context, viewport }).promise.then(() => {
                 $('#pdfViewer').append(pageCanvas);
-                renderPagesSequentially(pageNum + 1); // Render the next page
+                renderPagesSequentially(pageNum + 1);
             });
         });
     }
@@ -130,7 +164,7 @@ $(document).ready(function () {
         for (let i = 0; i < canvases.length; i++) {
             const canvasTop = canvases[i].offsetTop;
             const canvasHeight = canvases[i].clientHeight;
-            if (scrollPosition >= canvasTop && scrollPosition < (canvasTop + canvasHeight)) {
+            if (scrollPosition >= canvasTop - 200 && scrollPosition < (canvasTop + canvasHeight - 200)) {
                 $('#current-page').val(i + 1);
                 break;
             }
@@ -143,13 +177,13 @@ $(document).ready(function () {
     });
 
     $('#current-page').on('keypress', (event) => {
-    console.log(event)
-    if(event.key=="Enter"){
-    const pageNum = event.target.value;
-        if (pageNum >= 1 && pageNum <= totalPages) {
-            $(`#page-${pageNum}`)[0]?.scrollIntoView({ behavior: 'smooth' });
-        } else {
-            alert(`Please enter a valid page number between 1 and ${totalPages}.`);
+        if (event.key == "Enter") {
+            const pageNum = event.target.value;
+            if (pageNum >= 1 && pageNum <= totalPages) {
+                $(`#page-${pageNum}`)[0]?.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert(`Please enter a valid page number between 1 and ${totalPages}.`);
+            }
         }
-}});
+    });
 });

@@ -9,22 +9,71 @@ const lastValue = getLastSegment(currentUrl);
 const loadingMessage = document.getElementById('loading');
 loadingMessage.style.display = 'block';
 
-const cachedPdf = localStorage.getItem(`pdf-${lastValue}`);
-
-if (cachedPdf) {
-    loadAndRenderPDF(new Uint8Array(JSON.parse(cachedPdf)));
-} else {
-    fetch(`/embed/${lastValue}`, {method: "POST"})
-        .then(response => response.arrayBuffer())
-        .then(buffer => {
-            localStorage.setItem(`pdf-${lastValue}`, JSON.stringify(Array.from(new Uint8Array(buffer))));
-            loadAndRenderPDF(new Uint8Array(buffer));
-        })
-        .catch(() => {
-            loadingMessage.innerText = "Error while loading PDF...";
-            loadingMessage.style.display = 'block';
-        });
+// IndexedDB Setup
+function initIndexedDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open("PDFCacheDB", 1);
+        request.onupgradeneeded = function (event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("PDFStore")) {
+                db.createObjectStore("PDFStore", { keyPath: "key" });
+            }
+        };
+        request.onsuccess = function (event) {
+            resolve(event.target.result);
+        };
+        request.onerror = function () {
+            reject("Failed to initialize IndexedDB");
+        };
+    });
 }
+
+async function storePDFInIndexedDB(key, pdfData) {
+    const db = await initIndexedDB();
+    const transaction = db.transaction("PDFStore", "readwrite");
+    const store = transaction.objectStore("PDFStore");
+    store.put({ key, data: pdfData });
+}
+
+async function getPDFfromIndexedDB(key) {
+    return new Promise(async (resolve, reject) => {
+        const db = await initIndexedDB();
+        const transaction = db.transaction("PDFStore", "readonly");
+        const store = transaction.objectStore("PDFStore");
+        const request = store.get(key);
+        request.onsuccess = function () {
+            resolve(request.result ? request.result.data : null);
+        };
+        request.onerror = function () {
+            reject("Failed to retrieve PDF from IndexedDB");
+        };
+    });
+}
+
+// Attempt to retrieve from IndexedDB
+(async () => {
+    try {
+        const cachedPdf = await getPDFfromIndexedDB(lastValue);
+        if (cachedPdf) {
+            loadAndRenderPDF(new Uint8Array(cachedPdf));
+        } else {
+            fetch(`/embed/${lastValue}`, { method: "POST" })
+                .then(response => response.arrayBuffer())
+                .then(async buffer => {
+                    const pdfData = Array.from(new Uint8Array(buffer));
+                    await storePDFInIndexedDB(lastValue, pdfData);
+                    loadAndRenderPDF(new Uint8Array(buffer));
+                })
+                .catch(() => {
+                    loadingMessage.innerText = "Error while loading PDF...";
+                    loadingMessage.style.display = 'block';
+                });
+        }
+    } catch {
+        loadingMessage.innerText = "Error while loading PDF...";
+        loadingMessage.style.display = 'block';
+    }
+})();
 
 function loadAndRenderPDF(pdfData) {
     pdfjsLib.getDocument({ data: pdfData }).promise
@@ -59,25 +108,23 @@ document.getElementById('pdf-container').addEventListener('scroll', () => {
     pageCanvases.forEach((canvas, index) => {
         if (canvas.getBoundingClientRect().top >= 0 && canvas.getBoundingClientRect().top <= window.innerHeight / 2) {
             currentPage = index + 1;
-            document.getElementById('current-page').value  = currentPage;
+            document.getElementById('current-page').value = currentPage;
         }
     });
 });
 
 document.getElementById('current-page').addEventListener('keypress', (event) => {
-    console.log(event)
-    if(event.key=="Enter"){
-    const pageNum = event.target.value;
-    if (pageNum >= 1 && pageNum <= totalPages) {
-        const targetCanvas = document.getElementById(`page-${pageNum}`);
-        if (targetCanvas) {
-            targetCanvas.scrollIntoView({ behavior: 'smooth' });
-            currentPage = pageNum;
-            document.getElementById('current-page').value = currentPage;
+    if (event.key == "Enter") {
+        const pageNum = event.target.value;
+        if (pageNum >= 1 && pageNum <= totalPages) {
+            const targetCanvas = document.getElementById(`page-${pageNum}`);
+            if (targetCanvas) {
+                targetCanvas.scrollIntoView({ behavior: 'smooth' });
+                currentPage = pageNum;
+                document.getElementById('current-page').value = currentPage;
+            }
+        } else {
+            alert(`Please enter a valid page number between 1 and ${totalPages}.`);
         }
-    } else {
-        alert(`Please enter a valid page number between 1 and ${totalPages}.`);
-    }}
+    }
 });
-
-
