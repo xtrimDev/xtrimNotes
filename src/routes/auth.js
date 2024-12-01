@@ -10,6 +10,9 @@ const isEmail = require("../functions/isEmail");
 const { newUser, newVerification, removeUser, resetPass, verifyVerification, checkVerification } = require("../controller/auth");
 const smtp = require("../modules/smtp");
 const { ensureAuthenticated, ensureNotAuthenticated } = require("../middleware/auth");
+const isDomainValid = require("../functions/isDomainValid");
+const loginLimiter = require("../middleware/loginLimiter");
+const registrationLimiter = require("../middleware/registrationLimiter");
 
 require("dotenv").config();
 
@@ -26,7 +29,7 @@ router.get("/login", ensureAuthenticated, (req, res) => {
     return res.render("auth/login",{setting : {appName: process.env.APP_NAME, teleLink: process.env.TELE_LINK}});
 });
 
-router.post("/login", ensureAuthenticated, async (req, res, next) => {
+router.post("/login", ensureAuthenticated, loginLimiter, async (req, res, next) => {
     try {
         const email = req.body.email;
         const password = req.body.password;
@@ -138,7 +141,7 @@ router.get("/register", ensureAuthenticated, (req, res) => {
     return res.render("auth/register");
 });
 
-router.post("/register", ensureAuthenticated, async (req, res) => {
+router.post("/register", ensureAuthenticated, registrationLimiter, async (req, res) => {
     try {
         const name = req.body.name;
         const email = req.body.email;
@@ -178,6 +181,15 @@ router.post("/register", ensureAuthenticated, async (req, res) => {
             errorData = {
                 msg: "Enter a valid email address"
             }
+        } else {
+            isDomainValid(email, (isValid) => {
+                if (!isValid) {
+                    isError = true;
+                    errorData = {
+                        msg: "Enter a valid email address"
+                    }
+                }
+            });
         }
 
         /** Validating the mobile field */
