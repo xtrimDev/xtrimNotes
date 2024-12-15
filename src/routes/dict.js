@@ -143,6 +143,7 @@ router.post("/addFile", async (req, res, next) => {
 
         next();
     } catch (error) {
+        console.log(error);
         return res.status(500).render("errors/500");
     }
 }, upload.single('file'), async (req, res, next) => {
@@ -257,6 +258,7 @@ router.post("/addFile", async (req, res, next) => {
             return res.status(400).json(errorData);
         }
 
+        console.log(error);
         return res.status(500).render("errors/500");
     }
 });

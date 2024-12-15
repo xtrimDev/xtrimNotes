@@ -13,6 +13,7 @@ const { ensureAuthenticated, ensureNotAuthenticated } = require("../middleware/a
 const isDomainValid = require("../functions/isDomainValid");
 const loginLimiter = require("../middleware/loginLimiter");
 const registrationLimiter = require("../middleware/registrationLimiter");
+const forgotPasswordLimiter = require("../middleware/forgotPasswordLimiter");
 
 require("dotenv").config();
 
@@ -43,23 +44,24 @@ router.post("/login", ensureAuthenticated, loginLimiter, async (req, res, next) 
         /** Validating the email field */
         if (!email && !isError || email.trim() === '' && !isError) {
             isError = true;
-            errorData = {
-                msg: "Email is required"
-            }
+            errorData.msg = "Email is required";
         }
         if (!isEmail(email) && !isError) {
             isError = true;
-            errorData = {
-                msg: "Enter a valid email address"
-            }
+            errorData.msg = "Enter a valid email address"
+        } else {
+            isDomainValid(email, (isValid) => {
+                if (!isValid) {
+                    isError = true;
+                    errorData.msg = "Email is not registered yet."
+                }
+            });
         }
 
         /** Validating the password field */
         if (!password && !isError || password.trim() === '' && !isError) {
             isError = true;
-            errorData = {
-                msg: "Password is required"
-            }
+            errorData.msg = "Password is required"
         }
 
         /** If known error found return it */
@@ -103,16 +105,12 @@ router.post("/login", ensureAuthenticated, loginLimiter, async (req, res, next) 
                         return res.status(200).json({ success: 0, msg: "Check your inbox, a mail sent to you", verified: false });
                     } else {
                         isError = true;
-                        errorData = {
-                            msg: (newVerifications.msg ? newVerifications.msg : errorData.msg)
-                        }
+                        errorData.msg = (newVerifications.msg ? newVerifications.msg : errorData.msg)
                     }
                 }
 
                 isError = true;
-                errorData = {
-                    msg: info.message
-                }
+                errorData.msg = info.message;
             }
 
             if (!isError) {
@@ -158,36 +156,26 @@ router.post("/register", ensureAuthenticated, registrationLimiter, async (req, r
         /** Validating the name field */
         if (!name && !isError || name.trim() === '' && !isError) {
             isError = true;
-            errorData = {
-                msg: "Name is required"
-            }
+            errorData.msg = "Name is required";
         }
         if (name.length < 3 && !isError || name.length > 30 && !isError) {
             isError = true;
-            errorData = {
-                msg: "Name length must be between 3 and 30 characters"
-            }
+            errorData.msg = "Name length must be between 3 and 30 characters";
         }
 
         /** Validating the email field */
         if (!email && !isError || email.trim() === '' && !isError) {
             isError = true;
-            errorData = {
-                msg: "Email is required"
-            }
+            errorData.msg = "Email is required";
         }
         if (!isEmail(email) && !isError) {
             isError = true;
-            errorData = {
-                msg: "Enter a valid email address"
-            }
+            errorData.msg = "Enter a valid email address"
         } else {
             isDomainValid(email, (isValid) => {
                 if (!isValid) {
                     isError = true;
-                    errorData = {
-                        msg: "Enter a valid email address"
-                    }
+                    errorData.msg = "Only @gmail.com, @gehu.ac.in and @geu.ac.in emails are allowed.";
                 }
             });
         }
@@ -195,29 +183,21 @@ router.post("/register", ensureAuthenticated, registrationLimiter, async (req, r
         /** Validating the mobile field */
         if (!tel && !isError || tel.trim() === '' && !isError) {
             isError = true;
-            errorData = {
-                msg: "Mobile number is required"
-            }
+            errorData.msg = "Mobile number is required";
         }
         if (tel.length != 10 && !isError || !isNumeric(tel) && !isError) {
             isError = true;
-            errorData = {
-                msg: "Enter a valid mobile number"
-            }
+            errorData.msg = "Enter a valid mobile number";
         }
 
         /** Validating the password field */
         if (!password && !isError || password.trim() === '' && !isError) {
             isError = true;
-            errorData = {
-                msg: "Password is required"
-            }
+            errorData.msg = "Password is required"
         }
         if (password.length < 8 && !isError) {
             isError = true;
-            errorData = {
-                msg: "Password must be at least 8 characters long"
-            }
+            errorData.msg = "Password must be at least 8 characters long";
         }
 
         /** Registering user to the database */
@@ -254,9 +234,7 @@ router.post("/register", ensureAuthenticated, registrationLimiter, async (req, r
                     return res.status(200).json({ success: 1, msg: "User registered successfully" });
                 } else {
                     isError = true;
-                    errorData = {
-                        msg: (newVerifications.msg ? newVerifications.msg : errorData.msg)
-                    }
+                    errorData.msg = (newVerifications.msg ? newVerifications.msg : errorData.msg)
                 }
             } else {
                 isError = true;
@@ -264,14 +242,10 @@ router.post("/register", ensureAuthenticated, registrationLimiter, async (req, r
                 if (result?.msg?.name === 'ValidationError') {
                     const firstErrorField = Object.keys(result.msg.errors)[0];
 
-                    errorData = {
-                        msg: result.msg.errors[firstErrorField].message,
-                    }
+                    errorData.msg = result.msg.errors[firstErrorField].message
                 } else {
-                    errorData = {
-                        msg: (result.msg ? result.msg : errorData.msg),
-                        reset: false,
-                    }
+                    errorData.msg = (result.msg ? result.msg : errorData.msg)
+                    errorData.reset = false;
                 }
             }
         } else {
@@ -294,7 +268,7 @@ router.get("/forgotPassword", ensureAuthenticated, (req, res) => {
     return res.render("auth/forgotPassword");
 });
 
-router.post("/forgotPassword", ensureAuthenticated, async (req, res) => {
+router.post("/forgotPassword", forgotPasswordLimiter, ensureAuthenticated, async (req, res) => {
     try {
         const email = req.body.email;
 
@@ -307,15 +281,18 @@ router.post("/forgotPassword", ensureAuthenticated, async (req, res) => {
         /** Validating the email field */
         if (!email && !isError || email.trim() === '' && !isError) {
             isError = true;
-            errorData = {
-                msg: "Email is required"
-            }
+            errorData.msg = "Email is required"
         }
         if (!isEmail(email) && !isError) {
             isError = true;
-            errorData = {
-                msg: "Enter a valid email address"
-            }
+            errorData.msg = "Enter a valid email address"
+        } else {
+            isDomainValid(email, (isValid) => {
+                if (!isValid) {
+                    isError = true;
+                    errorData.msg = "Enter a valid email address";
+                }
+            });
         }
 
         if (!isError) {
@@ -351,9 +328,7 @@ router.post("/forgotPassword", ensureAuthenticated, async (req, res) => {
                     return res.status(200).json({ success: 1, msg: "Password reset mail has been sent." });
                 } else {
                     isError = true;
-                    errorData = {
-                        msg: (newVerifications.msg ? newVerifications.msg : errorData.msg)
-                    }
+                    errorData.msg = (newVerifications.msg ? newVerifications.msg : errorData.msg);
                 }
             } else {
                 isError = true;
@@ -361,14 +336,9 @@ router.post("/forgotPassword", ensureAuthenticated, async (req, res) => {
                 if (result?.msg?.name === 'ValidationError') {
                     const firstErrorField = Object.keys(result.msg.errors)[0];
 
-                    errorData = {
-                        msg: result.msg.errors[firstErrorField].message,
-                    }
+                    errorData.mg = result.msg.errors[firstErrorField].message
                 } else {
-                    errorData = {
-                        msg: (result.msg ? result.msg : errorData.msg),
-                        reset: false,
-                    }
+                    errorData.msg = (result.msg ? result.msg : errorData.msg)
                 }
             }
         }
@@ -432,31 +402,23 @@ router.post("/resetPassword", ensureAuthenticated, async (req, res) => {
         /** Validating the password field */
         if (!password && !isError || password.trim() === '' && !isError) {
             isError = true;
-            errorData = {
-                msg: "Password is required"
-            }
+            errorData.msg = "Password is required";
         }
         if (password.length < 8 && !isError) {
             isError = true;
-            errorData = {
-                msg: "Password must be at least 8 characters long"
-            }
+            errorData.msg = "Password must be at least 8 characters long"
         }
 
         /** Validating the confirmPassword field */
         if (!confirmPassword && !isError || confirmPassword.trim() === '' && !isError) {
             isError = true;
-            errorData = {
-                msg: "Confirm Password is required"
-            }
+            errorData.msg = "Confirm Password is required"
         }
 
         /** Check if the passwords are equal or not  */
         if (confirmPassword != password && !isError) {
             isError = true;
-            errorData = {
-                msg: "Both password do not match"
-            }
+            errorData.msg = "Both password do not match"
         }
 
        if (!isError) {

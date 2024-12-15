@@ -16,6 +16,8 @@ const viewsPath = path.join(`${__dirname}./../views`);
 const initializePassport = require("./config/passport");
 initializePassport(passport);
 
+app.set('trust proxy', "loopback");
+
 app.use(express.urlencoded({ extended: false }));
 app.use(
     session({

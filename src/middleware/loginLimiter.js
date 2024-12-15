@@ -6,7 +6,7 @@ const loginLimiter = rateLimit({
     handler: (req, res) => {
         const retryAfter = Math.ceil(req.rateLimit.resetTime.getTime() - Date.now()) / 1000 / 60; // Remaining time in minutes
         res.status(400).json({
-            error: `Too many login attempts. Please try again after ${Math.ceil(retryAfter)} minute(s).`,
+            msg: `Too many login attempts. Please try again after ${Math.ceil(retryAfter)} minute(s).`,
         });
     },
     standardHeaders: true, // Send rate limit info in `RateLimit-*` headers

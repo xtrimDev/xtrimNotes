@@ -6,7 +6,7 @@ const registrationLimiter = rateLimit({
     handler: (req, res) => {
         const retryAfter = Math.ceil((req.rateLimit.resetTime.getTime() - Date.now()) / 1000 / 60); // Minutes left
         res.status(400).json({
-            error: `Too many registration attempts. Please try again in ${retryAfter} minute(s).`,
+            msg: `Too many registration attempts. Please try again in ${retryAfter} minute(s).`,
         });
     },
     standardHeaders: true,

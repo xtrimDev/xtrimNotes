@@ -67,6 +67,21 @@ $(document).ready(function () {
             BookmarkBtn.attr("disabled", true);
             BookmarkBtn.attr("onclick", `toggleBookmark('${embedValue}', '${embedTitle}')`);
 
+            try {
+                const cachedPdf = await getPDFfromIndexedDB(embedValue);
+                if (cachedPdf) {
+                    loadAndRenderPDF(new Uint8Array(cachedPdf));
+                } else {
+                    const response = await fetch(url, { method: "POST" });
+                    const buffer = await response.arrayBuffer();
+                    const pdfData = new Uint8Array(buffer);
+                    await storePDFInIndexedDB(embedValue, Array.from(pdfData));
+                    loadAndRenderPDF(pdfData);
+                }
+            } catch {
+                pdfViewer.html('<div style="font-size: 1.5rem; color: white; position: relative; top: 50%;">Error while loading PDF...</div>');
+            }
+
             let data = cache.has("/bookmarks") ? cache.get("/bookmarks") : null;
 
             if (!data) {
@@ -113,21 +128,6 @@ $(document).ready(function () {
                 }
 
                 BookmarkBtn.removeAttr("disabled");
-            }
-
-            try {
-                const cachedPdf = await getPDFfromIndexedDB(embedValue);
-                if (cachedPdf) {
-                    loadAndRenderPDF(new Uint8Array(cachedPdf));
-                } else {
-                    const response = await fetch(url, { method: "POST" });
-                    const buffer = await response.arrayBuffer();
-                    const pdfData = new Uint8Array(buffer);
-                    await storePDFInIndexedDB(embedValue, Array.from(pdfData));
-                    loadAndRenderPDF(pdfData);
-                }
-            } catch {
-                pdfViewer.html('<div style="font-size: 1.5rem; color: white; position: relative; top: 50%;">Error while loading PDF...</div>');
             }
         }
     });
