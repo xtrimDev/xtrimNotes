@@ -217,7 +217,14 @@ $(document).ready(function () {
                         timer: 1500,
                         showConfirmButton: false,
                     }).then(() => {
-                        window.location.reload();
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const redirectTo = urlParams.get('redirectTo'); 
+
+                        if (redirectTo && redirectTo.startsWith(window.location.origin)) {
+                            window.location.href = redirectTo;
+                        } else {
+                            window.location.href = '/';
+                        }
                     })
 
                     $('#logForm').trigger('reset');

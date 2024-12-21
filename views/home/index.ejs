@@ -152,7 +152,8 @@
         const footer = `
             <div class="footer">
                 <div class="footer-item">
-                    <div class="text">Need Help ? <span onclick="window.open('mailto:xtrim.dev@gmail.com', '_blank')">Click here</span></div>
+                    <div class="icon question"></div>
+                    <div class="text">Need Help ? <span onclick="window.open('mailto:xtrimnotes@gmail.com', '_blank')">Click here</span></div>
                 </div>
                 <div class="footer-item">
                     <div class="icon group"></div>
@@ -194,7 +195,8 @@
                                     text: "Your don't have permission to access the content.",
                                     icon: "error",
                                 }).then(() => {
-                                    window.location.href = '/auth/login';
+                                    const redirectTo = encodeURIComponent(window.location.href); 
+                                    window.location.href = `/auth/login?redirectTo=${redirectTo}`;
                                 });
                             }
 
@@ -204,7 +206,8 @@
                                     text: "Your are not loggedin, login again to access it.",
                                     icon: "error",
                                 }).then(() => {
-                                    window.location.href = '/auth/login';
+                                    const redirectTo = encodeURIComponent(window.location.href);
+                                    window.location.href = `/auth/login?redirectTo=${redirectTo}`;
                                 });
 
                                 return;
@@ -324,7 +327,7 @@
                     folders = data['folders'].map(item => `
             <a class="content folder-menu" onclick="changePageContent('${item.path}', '${item.name}')" data-path="${item.path}" data-name="${item.name}">
                 <div class="icon fa fa-folder"></div>
-                <div class="text">${item.name}</div>
+                <div class="text" title="${item.name}">${item.name}</div>
             </a>
         `).join('');
                 }
@@ -333,7 +336,7 @@
                 const files = data['files'].map(item => `
             <a class="content file-menu" data-embed="${item.uniqueName}" data-name="${item.name}">
                 <div class="icon fa fa-file-pdf"></div>
-                <div class="text">${item.name}</div>
+                <div class="text" title="${item.name}">${item.name}</div>
             </a>
         `).join('');
 

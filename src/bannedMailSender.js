@@ -5,7 +5,7 @@ const ejs = require("ejs");
 
 // List of emails with corresponding messages
 const emailList = [
-    { email: 'bhandarisameer512@gmail.com' }
+    { email: 'kushchoudhary51@gmail.com' }
 ]
 // Function to send banned messages
 async function sendBannedMessages(emailList) {

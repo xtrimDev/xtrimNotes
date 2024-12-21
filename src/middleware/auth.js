@@ -9,7 +9,8 @@ function ensureAuthenticated(req, res, next) {
 
 async function ensureNotAuthenticated(req, res, next) {
     if (!req.isAuthenticated()) {
-        return res.redirect(`/auth/login`);
+        const fullUrl = encodeURIComponent(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
+        return res.redirect(`/auth/login?redirectTo=${fullUrl}`);
     }
 
     try {
@@ -20,7 +21,9 @@ async function ensureNotAuthenticated(req, res, next) {
                 if (err) {
                     return next(err);
                 }
-                return res.redirect(`/auth/login`);
+
+                const fullUrl = encodeURIComponent(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
+                return res.redirect(`/auth/login?redirectTo=${fullUrl}`);
             });
         } else {
             return next();

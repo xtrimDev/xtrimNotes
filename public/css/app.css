@@ -32,7 +32,7 @@
     --file-left-icon: url("/images/app/dark/file.png");
     --menu-icon: url("/images/app/dark/menu_154336.png");
     --search-icon: url("/images/app/dark/magnifying-glass_8637605.png");
-    --donation: url('/images/app/dark/charity.png');
+    --question: url('/images/app/dark/question.png');
     --group: url('/images/app/dark/group.png');
     --nothing: url("/images/app/dark/nothing.png");
 }
@@ -1059,8 +1059,8 @@ button.previous:active {
     min-width: 20px
 }
 
-.footer .footer-item .icon.donation {
-    background-image: var(--donation)
+.footer .footer-item .icon.question {
+    background-image: var(--question)
 }
 
 .footer .footer-item .icon.group {
