@@ -1,17 +1,36 @@
 require("dotenv").config();
 
+require("./server/dbConnect");
+
+const userModel = require("./models/users");
 const smtp = require("./modules/smtp");
 const ejs = require("ejs");
 
 // List of emails with corresponding messages
 const emailList = [
-    { email: 'kushchoudhary51@gmail.com' }
-]
+    { email: '', msg: 'Your account has been banned for violating our terms of service.' }
+];
+
 // Function to send banned messages
 async function sendBannedMessages(emailList) {
+    await smtp.verify();
+
     for (const { email, msg } of emailList) {
         try {
-            await smtp.verify();
+            const user = await userModel.findOne({ email: email });
+            if (!user) {
+                console.error(`User not found with email: ${email}`);
+                continue;
+            }
+
+            if (user.role == "owner") {
+                console.error(`Cannot ban the owner account with email: ${email}`);
+                continue;
+            }
+
+            // Update the user's status to banned
+            user.role = "banned";
+            await user.save();
 
             const data = await ejs.renderFile(
                 __dirname + "/../views/auth/mail/banned.ejs",
